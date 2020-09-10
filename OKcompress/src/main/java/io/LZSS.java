@@ -22,7 +22,11 @@ public class LZSS {
         int dictionaryStartIndex = 0;
         int dictionaryEndIndex = -1;
         boolean coded = false;
-        for (int i = 0; i < input.length; i++) {         
+        for (int i = 0; i < input.length; i++) {
+            dictionaryEndIndex = i - 1;
+            if (i > 2048) {
+                dictionaryStartIndex = dictionaryEndIndex - 2047;
+            }
             for (int j = dictionaryStartIndex; j <= dictionaryEndIndex; j++) {
                 if (input[i] == input[j]) { // found a match
                     int length = 1;
@@ -50,7 +54,8 @@ public class LZSS {
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
                         output.writeCoded(j, length);
                         coded = true;
-                        i += length;
+                        i += length-1;
+                        break;
                     }
                 }               
             }
@@ -60,16 +65,32 @@ public class LZSS {
             } else {
                 coded = false;
             }
-            
-            if (i > 2047) {
-                dictionaryStartIndex++;
-                dictionaryEndIndex++;
-            } else {
-                dictionaryEndIndex++;
-            }
         }
         
         output.close();
         return output.getByteArray();
+    }
+    
+    public ArrayList<Byte> decode(ArrayList<Byte> bytes) {
+        int n = bytes.size();
+        ArrayList<Byte> output = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (bytes.get(i) == 0) { // a zero byte indicates an uncoded byte
+                output.add(bytes.get(i+1));
+                i++;
+            } else {
+                String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(' ', '0') + 
+                        String.format("%8s", Integer.toBinaryString(bytes.get(i+1) & 0xFF)).replace(' ', '0');
+                int position = Integer.parseInt(encoded.substring(1, 12), 2);
+                int length = Integer.parseInt(encoded.substring(12, 16), 2);
+                System.out.println("pos " + position + ", len " + length);
+                for (int j = 0; j < length; j++) {
+                    output.add(output.get(position+j));
+                }
+                i++;
+            }
+        }
+        
+        return output;
     }
 }

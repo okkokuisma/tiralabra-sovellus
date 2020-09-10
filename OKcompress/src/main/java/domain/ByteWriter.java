@@ -31,30 +31,23 @@ public class ByteWriter {
     }
     
     public void writeUncoded(byte input) {
-        writeBit((byte) 0);
-        String bits = Integer.toBinaryString(Byte.toUnsignedInt(input));
+        flushByte(); // 0 byte to sign an uncoded byte
+        String bits = String.format("%8s", Integer.toBinaryString(input & 0xFF)).replace(' ', '0');
+
         for (int i = 0; i < bits.length(); i++) {
             writeBit((byte) Character.getNumericValue(bits.charAt(i)));
         }
     }
 
     public void writeCoded(int pos, int length) {
-        String posBits = Integer.toBinaryString(pos);
-        String lenBits = Integer.toBinaryString(length);
-        int l = 11 - posBits.length();
-        for (int i = 0; i < l; i++) { // match position coded into 11 bits
-            posBits = "0" + posBits;
-        } 
-        l = 4 - lenBits.length();
-        for (int i = 0; i < l; i++) { //match length coded into 4 bits
-            lenBits = "0" + lenBits;
-        }
+        String posBits = String.format("%11s", Integer.toBinaryString(pos & 0xFF)).replace(' ', '0'); // match position coded into 11 bits
+        String lenBits = String.format("%4s", Integer.toBinaryString(length & 0xFF)).replace(' ', '0'); // match length coded into 4 bits
         
         writeBit((byte) 1); // sign bit for coded 
-        for (int i = 0; i < posBits.length(); i++) {
+        for (int i = 0; i < 11; i++) {
             writeBit((byte) Character.getNumericValue(posBits.charAt(i)));
         }
-        for (int i = 0; i < lenBits.length(); i++) {
+        for (int i = 0; i < 4; i++) {
             writeBit((byte) Character.getNumericValue(lenBits.charAt(i)));
         }
     }

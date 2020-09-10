@@ -1,10 +1,11 @@
 
-//import io.LZSS;
-//import java.io.File;
-//import java.io.FileInputStream;
+import io.LZSS;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-//import org.apache.commons.io.IOUtils;
+import java.util.ArrayList;
+import org.apache.commons.io.IOUtils;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,18 +20,23 @@ import java.io.IOException;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-//        FileInputStream input = new FileInputStream(new File("testi.txt"));
-//        byte[] bytearray = IOUtils.toByteArray(input);
-//        LZSS encoder = new LZSS();
-//        encoder.encode(bytearray);
-        byte tavu = 23;
-        String bits = Integer.toBinaryString(Byte.toUnsignedInt(tavu));
-        System.out.println(bits);
-        int l = bits.length();
-        for (int i = 0; i < (11 - l); i++) {
-            bits = "0" + bits;
+        FileInputStream input = new FileInputStream(new File("testi.txt"));
+        byte[] bytearray = IOUtils.toByteArray(input);
+        LZSS encoder = new LZSS();
+        ArrayList<Byte> encoded = encoder.encode(bytearray);
+        ArrayList<Byte> decoded = encoder.decode(encoded);
+        for (byte tavu : bytearray) {
+            System.out.println(tavu);
         }
-        System.out.println(bits);
+        System.out.println("--");
+        for (byte tavu : encoded) {
+            System.out.println(tavu);
+        }
+        System.out.println("--");
+        for (byte tavu : decoded) {
+            System.out.println(tavu);
+        }
+        
     }
     
 }
