@@ -5,7 +5,7 @@
  */
 package io;
 
-import domain.ByteOutputStream;
+import domain.ByteWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,10 +16,8 @@ import java.util.ArrayList;
  * @author ogkuisma
  */
 public class LZSS {
-    public void encode(byte[] input) throws IOException {
-        File output = new File("OKcompressed");
-        output.createNewFile();
-        ByteOutputStream outputStream = new ByteOutputStream(new File("OKcompressed"));
+    public ArrayList<Byte> encode(byte[] input) throws IOException {
+        ByteWriter output = new ByteWriter();
         
         int dictionaryStartIndex = 0;
         int dictionaryEndIndex = -1;
@@ -50,16 +48,7 @@ public class LZSS {
                     }
                     
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
-                        outputStream.write((byte)1); // sign bit for encoded
-                        
-                        char[] posBits = Integer.toBinaryString(j).toCharArray();
-                        char[] lenBits = Integer.toBinaryString(length).toCharArray();
-                        for (char bit : posBits) {
-                            outputStream.write((byte)Character.getNumericValue(bit));
-                        }
-                        for (char bit : lenBits) {
-                            outputStream.write((byte)Character.getNumericValue(bit));
-                        }
+                        output.writeCoded(j, length);
                         coded = true;
                         i += length;
                     }
@@ -67,11 +56,7 @@ public class LZSS {
             }
             
             if (!coded) { // didn't found a match at least 3 bytes long
-                outputStream.write((byte)0); // sign bit for uncoded
-                char[] bits = Integer.toBinaryString(Byte.toUnsignedInt(input[i])).toCharArray();
-                for (char bit : bits) {
-                    outputStream.write((byte)Character.getNumericValue(bit));
-                }
+                output.writeUncoded(input[i]);
             } else {
                 coded = false;
             }
@@ -83,5 +68,8 @@ public class LZSS {
                 dictionaryEndIndex++;
             }
         }
+        
+        output.close();
+        return output.getByteArray();
     }
 }
