@@ -3,8 +3,11 @@ import io.LZSS;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 
 /*
@@ -20,23 +23,28 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("testi.txt"));
+        FileInputStream input = new FileInputStream(new File("test.txt"));
+        File file = new File("decoded.txt");
+        file.createNewFile();
+        FileOutputStream output = new FileOutputStream(file);
         byte[] bytearray = IOUtils.toByteArray(input);
+        System.out.println(bytearray.length);
         LZSS encoder = new LZSS();
         ArrayList<Byte> encoded = encoder.encode(bytearray);
         ArrayList<Byte> decoded = encoder.decode(encoded);
-        for (byte tavu : bytearray) {
-            System.out.println(tavu);
+        System.out.println(encoded.size());
+        for (int i = 0; i < decoded.size(); i++) {
+            if (bytearray[i] != decoded.get(i)) {
+                System.out.println("buu");
+                break;
+            }
         }
-        System.out.println("--");
-        for (byte tavu : encoded) {
-            System.out.println(tavu);
+        byte[] juum = new byte[decoded.size()];
+        for (int i = 0; i < decoded.size(); i++) {
+            juum[i] = decoded.get(i);
         }
-        System.out.println("--");
-        for (byte tavu : decoded) {
-            System.out.println(tavu);
-        }
-        
+        output.write(juum);
+
     }
     
 }

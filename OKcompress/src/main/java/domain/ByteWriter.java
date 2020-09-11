@@ -40,9 +40,11 @@ public class ByteWriter {
     }
 
     public void writeCoded(int pos, int length) {
-        String posBits = String.format("%11s", Integer.toBinaryString(pos & 0xFF)).replace(' ', '0'); // match position coded into 11 bits
-        String lenBits = String.format("%4s", Integer.toBinaryString(length & 0xFF)).replace(' ', '0'); // match length coded into 4 bits
-        
+        String posBits = String.format("%11s", Integer.toBinaryString(pos & 0xFFF)).replace(' ', '0'); // match position coded into 11 bits
+        String lenBits = String.format("%4s", Integer.toBinaryString(length & 0xF)).replace(' ', '0'); // match length coded into 4 bits
+        if (pos == 2167) {
+            System.out.println("bits: " + posBits);
+        }
         writeBit((byte) 1); // sign bit for coded 
         for (int i = 0; i < 11; i++) {
             writeBit((byte) Character.getNumericValue(posBits.charAt(i)));

@@ -24,8 +24,8 @@ public class LZSS {
         boolean coded = false;
         for (int i = 0; i < input.length; i++) {
             dictionaryEndIndex = i - 1;
-            if (i > 2048) {
-                dictionaryStartIndex = dictionaryEndIndex - 2047;
+            if (i > 2046) {
+                dictionaryStartIndex = dictionaryEndIndex - 2046;
             }
             for (int j = dictionaryStartIndex; j <= dictionaryEndIndex; j++) {
                 if (input[i] == input[j]) { // found a match
@@ -52,7 +52,7 @@ public class LZSS {
                     }
                     
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
-                        output.writeCoded(j, length);
+                        output.writeCoded(i-j, length);
                         coded = true;
                         i += length-1;
                         break;
@@ -81,11 +81,10 @@ public class LZSS {
             } else {
                 String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(' ', '0') + 
                         String.format("%8s", Integer.toBinaryString(bytes.get(i+1) & 0xFF)).replace(' ', '0');
-                int position = Integer.parseInt(encoded.substring(1, 12), 2);
+                int offset = Integer.parseInt(encoded.substring(1, 12), 2);
                 int length = Integer.parseInt(encoded.substring(12, 16), 2);
-                System.out.println("pos " + position + ", len " + length);
                 for (int j = 0; j < length; j++) {
-                    output.add(output.get(position+j));
+                    output.add(output.get(output.size() - offset));
                 }
                 i++;
             }
