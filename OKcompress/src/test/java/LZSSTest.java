@@ -24,12 +24,12 @@ import static org.junit.Assert.*;
  * @author ogkuisma
  */
 public class LZSSTest {
-    byte[] bytearray;
+    byte[] input;
     LZSS encoder;
     
     public LZSSTest() throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("test.txt")); // 13.3 kB text file
-        bytearray = IOUtils.toByteArray(input);
+        FileInputStream inputStream = new FileInputStream(new File("test.txt")); // 12.9 kB text file
+        input = IOUtils.toByteArray(inputStream);
         encoder = new LZSS();
     }
     
@@ -42,7 +42,14 @@ public class LZSSTest {
     }
 
     @Test
-    public void slidingWindowIsRightSize() {
+    public void decodedOutputMatchesOriginalInput() {
+        ArrayList<Byte> decoded = encoder.decode(encoder.encode(input));
+        assertEquals(input.length, decoded.size()); // same size
         
+        for (int i = 0; i < decoded.size(); i++) {
+            if (input[i] != decoded.get(i)) { // fail if the data doesn't match
+                fail();
+            }
+        }
     }
 }

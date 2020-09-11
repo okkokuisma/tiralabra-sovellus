@@ -5,7 +5,7 @@
  */
 package io;
 
-import domain.ByteWriter;
+import utils.ByteWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * @author ogkuisma
  */
 public class LZSS {
-    public ArrayList<Byte> encode(byte[] input) throws IOException {
+    public ArrayList<Byte> encode(byte[] input) {
         ByteWriter output = new ByteWriter();
         
         int dictionaryStartIndex = 0;
@@ -33,7 +33,7 @@ public class LZSS {
                     int inputIndex = i;
                     int dictionaryIndex = j;
                     while (true) { // check how long the match is
-                        if (length > 10) { // max length for match is 11
+                        if (length > 14) { // max length for match is 15
                             break;
                         }
                         
@@ -44,7 +44,7 @@ public class LZSS {
                             break;
                         }
                         
-                        if (input[inputIndex] == input[dictionaryIndex]) {
+                        if (input[inputIndex] == input[dictionaryIndex]) { // next bytes match as well
                             length++;
                         } else {
                             break;
@@ -75,7 +75,7 @@ public class LZSS {
         int n = bytes.size();
         ArrayList<Byte> output = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            if (bytes.get(i) == 0) { // a zero byte indicates an uncoded byte
+            if (bytes.get(i) == 0) { // a zero byte indicates and precedes an uncoded byte
                 output.add(bytes.get(i+1));
                 i++;
             } else {
