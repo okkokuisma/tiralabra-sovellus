@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package io;
 
 import utils.ByteWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -79,7 +72,7 @@ public class LZSS {
                 output.add(bytes.get(i+1));
                 i++;
             } else {
-                String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(' ', '0') + 
+                String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(' ', '0') + // get next two bytes
                         String.format("%8s", Integer.toBinaryString(bytes.get(i+1) & 0xFF)).replace(' ', '0');
                 int offset = Integer.parseInt(encoded.substring(1, 12), 2);
                 int length = Integer.parseInt(encoded.substring(12, 16), 2);

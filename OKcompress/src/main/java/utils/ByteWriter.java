@@ -3,7 +3,6 @@
  */
 package utils;
 
-import java.io.*;
 import java.util.ArrayList;
 
 public class ByteWriter {
@@ -40,13 +39,13 @@ public class ByteWriter {
     }
 
     public void writeCoded(int offset, int length) {
-        String posBits = String.format("%11s", Integer.toBinaryString(offset & 0xFFF)).replace(' ', '0'); // match position coded into 11 bits
-        String lenBits = String.format("%4s", Integer.toBinaryString(length & 0xF)).replace(' ', '0'); // match length coded into 4 bits
         if (offset > 2047) {
             throw new RuntimeException("Offset input over 2047");
         } else if (length > 15) {
             throw new RuntimeException("Length input over 15");
         }
+        String posBits = String.format("%11s", Integer.toBinaryString(offset & 0xFFF)).replace(' ', '0'); // match position coded into 11 bits
+        String lenBits = String.format("%4s", Integer.toBinaryString(length & 0xF)).replace(' ', '0'); // match length coded into 4 bits
         writeBit((byte) 1); // sign bit for coded 
         for (int i = 0; i < 11; i++) {
             writeBit((byte) Character.getNumericValue(posBits.charAt(i)));
