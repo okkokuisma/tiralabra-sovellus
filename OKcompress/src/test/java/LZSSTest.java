@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import io.LZSS;
+import OKcompress.LZSS;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -1,7 +1,7 @@
 
-package io;
+package OKcompress;
 
-import utils.ByteWriter;
+import OKcompress.utils.ByteWriter;
 import java.util.ArrayList;
 
 /**

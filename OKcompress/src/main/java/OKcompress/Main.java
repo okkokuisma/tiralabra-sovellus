@@ -1,5 +1,7 @@
+package OKcompress;
 
-import io.LZSS;
+
+import OKcompress.LZSS;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

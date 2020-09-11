@@ -1,7 +1,7 @@
 /*
  Utility class for writing individual bits to a byte
  */
-package utils;
+package OKcompress.utils;
 
 import java.util.ArrayList;
 
