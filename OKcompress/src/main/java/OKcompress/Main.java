@@ -44,18 +44,6 @@ public class Main {
 //            juum[i] = decoded.get(i);
 //        }
 //        output.write(juum);
-        String moi = "moi";
-        byte[] bytes = {(byte) -10};
-        for (int i = 0; i < bytes.length; i++) {
-            System.out.println(String.format("%8s", Integer.toBinaryString(bytes[i] & 0xFF)).replace(' ', '0'));
-        }
-        System.out.println("--");
-        System.out.println(bytes[0]);
-        System.out.println("--");
-        int i = 0xff & bytes[0];
-        System.out.println(i);
-        System.out.println("--");
-        System.out.println((byte) i);
     }
     
 }

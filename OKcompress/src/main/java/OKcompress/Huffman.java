@@ -5,6 +5,7 @@
  */
 package OKcompress;
 
+import OKcompress.domain.HuffmanNode;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
@@ -15,17 +16,26 @@ import java.util.PriorityQueue;
 public class Huffman {
     
     public ArrayList<Byte> encode(byte[] input) {
-        PriorityQueue huffmanTree = new PriorityQueue();
+        PriorityQueue<HuffmanNode> huffmanTree = new PriorityQueue();
         
         byte[] occurances = new byte[256];
         for (int i = 0; i < input.length; i++) {
-            int idx = 0xff & input[i];
-            occurances[idx]++;
+            int index = 0xff & input[i];
+            occurances[index]++;
         }
-        for (int i = 0; i < input.length; i++) {
-            int idx = 0xff & input[i];
-            occurances[idx]++;
+        for (int i = 0; i < occurances.length; i++) {
+            if (occurances[i] != 0) {
+                HuffmanNode node = new HuffmanNode((byte) i, occurances[i]);
+                huffmanTree.add(node);
+            }
         }
+        while (huffmanTree.size() != 1) {
+            HuffmanNode node = new HuffmanNode();
+            node.leftChild = huffmanTree.poll();
+            node.rightChild = huffmanTree.poll();
+            node.weigth = node.leftChild.weigth + node.rightChild.weigth;
+            huffmanTree.add(node);
+        }   
         
         return null;
     }
