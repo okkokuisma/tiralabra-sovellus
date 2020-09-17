@@ -10,7 +10,7 @@ package OKcompress.domain;
  * @author ogkuisma
  */
 public class HuffmanNode implements Comparable<HuffmanNode> {
-    byte byteValue;
+    public byte byteValue;
     public int weigth;
     public HuffmanNode leftChild;
     public HuffmanNode rightChild;

@@ -23,27 +23,29 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-//        FileInputStream input = new FileInputStream(new File("test.txt"));
+        FileInputStream input = new FileInputStream(new File("test.txt"));
+        byte[] bytearray = IOUtils.toByteArray(input);
 //        File file = new File("decoded.txt");
 //        file.createNewFile();
 //        FileOutputStream output = new FileOutputStream(file);
-//        byte[] bytearray = IOUtils.toByteArray(input);
 //        System.out.println(bytearray.length);
 //        LZSS encoder = new LZSS();
 //        ArrayList<Byte> encoded = encoder.encode(bytearray);
-//        ArrayList<Byte> decoded = encoder.decode(encoded);
 //        System.out.println(encoded.size());
+//        ArrayList<Byte> decoded = encoder.decode(encoded);
 //        for (int i = 0; i < decoded.size(); i++) {
 //            if (bytearray[i] != decoded.get(i)) {
 //                System.out.println("buu");
 //                break;
 //            }
 //        }
-//        byte[] juum = new byte[decoded.size()];
-//        for (int i = 0; i < decoded.size(); i++) {
-//            juum[i] = decoded.get(i);
+//        byte[] juum = new byte[encoded.size()];
+//        for (int i = 0; i < encoded.size(); i++) {
+//            juum[i] = encoded.get(i);
 //        }
 //        output.write(juum);
+        Huffman huf = new Huffman();
+        System.out.println(huf.encode(bytearray).size());
     }
     
 }
