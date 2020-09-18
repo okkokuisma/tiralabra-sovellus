@@ -11,22 +11,23 @@ public class ByteWriter {
     byte position;
     ArrayList<Byte> byteArray;
 
-    public ByteWriter(){
+    public ByteWriter() {
         buffer = 0x00;
         byteArray = new ArrayList<>();
     }
 
     public void writeBit(byte bit) {
-        if (!(bit == 0 || bit == 1))
+        if (!(bit == 0 || bit == 1)) {
             throw new RuntimeException("A bit can only be a 1 or 0");
-
-        buffer = (byte)(buffer << 1);
+        }
+        buffer = (byte) (buffer << 1);
         buffer |= bit;
 
         position++;
 
-        if (position == 8)
+        if (position == 8) {
             flushByte();
+        }
     }
     
     public void writeUncoded(byte input) {
@@ -55,9 +56,9 @@ public class ByteWriter {
         }
     }
 
-    public void close(){
+    public void close() {
         if (position != 0) {
-            buffer = (byte)(buffer << (8 - position));
+            buffer = (byte) (buffer << (8 - position));
             flushByte();
         }
     }

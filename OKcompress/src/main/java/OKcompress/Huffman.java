@@ -67,7 +67,7 @@ public class Huffman {
         } else {
             binaryString = binaryString + "0";
             walkTree(node.leftChild, binaryString, codes);
-            binaryString = binaryString.substring(0, binaryString.length()-1) + "1";
+            binaryString = binaryString.substring(0, binaryString.length() - 1) + "1";
             walkTree(node.rightChild, binaryString, codes);
         }
     }

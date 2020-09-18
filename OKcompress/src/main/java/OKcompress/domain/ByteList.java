@@ -54,7 +54,7 @@ public class ByteList {
             return;
         }
         
-        array[endIndex+1] = x;
+        array[endIndex + 1] = x;
         endIndex++;
         size++;
         
@@ -74,7 +74,7 @@ public class ByteList {
         
         int lengthAfterStartIndex = array.length - startIndex;
         if (k < lengthAfterStartIndex) {
-            return array[startIndex+k];
+            return array[startIndex + k];
         } else {
             return array[k - lengthAfterStartIndex];
         }
@@ -103,7 +103,7 @@ public class ByteList {
                 index++;
             }
             
-            endIndex = index-1;
+            endIndex = index - 1;
         }
         
         startIndex = 0;

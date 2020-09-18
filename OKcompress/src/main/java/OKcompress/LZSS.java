@@ -45,9 +45,9 @@ public class LZSS {
                     }
                     
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
-                        output.writeCoded(i-j, length);
+                        output.writeCoded(i - j, length);
                         coded = true;
-                        i += length-1;
+                        i += length - 1;
                         break;
                     }
                 }               
@@ -69,11 +69,11 @@ public class LZSS {
         ArrayList<Byte> output = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             if (bytes.get(i) == 0) { // a zero byte indicates and precedes an uncoded byte
-                output.add(bytes.get(i+1));
+                output.add(bytes.get(i + 1));
                 i++;
             } else {
                 String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(' ', '0') + // get next two bytes
-                        String.format("%8s", Integer.toBinaryString(bytes.get(i+1) & 0xFF)).replace(' ', '0');
+                        String.format("%8s", Integer.toBinaryString(bytes.get(i + 1) & 0xFF)).replace(' ', '0');
                 int offset = Integer.parseInt(encoded.substring(1, 12), 2);
                 int length = Integer.parseInt(encoded.substring(12, 16), 2);
                 for (int j = 0; j < length; j++) {
