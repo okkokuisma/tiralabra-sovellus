@@ -10,11 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
@@ -33,12 +28,6 @@ public class Main {
 //        ArrayList<Byte> encoded = encoder.encode(bytearray);
 //        System.out.println(encoded.size());
 //        ArrayList<Byte> decoded = encoder.decode(encoded);
-//        for (int i = 0; i < decoded.size(); i++) {
-//            if (bytearray[i] != decoded.get(i)) {
-//                System.out.println("buu");
-//                break;
-//            }
-//        }
 //        byte[] juum = new byte[encoded.size()];
 //        for (int i = 0; i < encoded.size(); i++) {
 //            juum[i] = encoded.get(i);

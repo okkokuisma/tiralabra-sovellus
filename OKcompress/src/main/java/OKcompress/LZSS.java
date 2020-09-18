@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author ogkuisma
+ * Lempel–Ziv–Storer–Szymanski algorithm for data compression
  */
 public class LZSS {
     public ArrayList<Byte> encode(byte[] input) {

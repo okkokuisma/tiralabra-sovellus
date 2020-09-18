@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package OKcompress;
 
 import OKcompress.domain.HuffmanHeap;
@@ -13,7 +9,7 @@ import java.util.PriorityQueue;
 
 /**
  *
- * @author ogkuisma
+ * Huffman coding 
  */
 public class Huffman {
     
@@ -23,7 +19,7 @@ public class Huffman {
         
         int[] occurances = new int[256];
         for (int i = 0; i < input.length; i++) { // check how many occurances of each individual byte there are in the input array
-            int index = 0xff & input[i];
+            int index = 0xFF & input[i]; // get the positive index for byte
             occurances[index]++;
         }
         // create a node of each individual byte in the input array where the number of occurances is the weight of the created node
@@ -33,7 +29,7 @@ public class Huffman {
                 huffmanTree.add(node);
             }
         }
-        while (huffmanTree.getLast() != 1) { // create a huffman tree which determines the huffman code for each individual byte
+        while (huffmanTree.getLast() != 1) { // create a tree which determines the huffman code for each individual byte
             HuffmanNode node = new HuffmanNode();
             node.leftChild = huffmanTree.poll();
             node.rightChild = huffmanTree.poll();
@@ -67,7 +63,7 @@ public class Huffman {
         } else {
             binaryString = binaryString + "0";
             walkTree(node.leftChild, binaryString, codes);
-            binaryString = binaryString.substring(0, binaryString.length() - 1) + "1";
+            binaryString = binaryString.substring(0, binaryString.length() - 1) + "1"; // replace the last 0 with 1
             walkTree(node.rightChild, binaryString, codes);
         }
     }
