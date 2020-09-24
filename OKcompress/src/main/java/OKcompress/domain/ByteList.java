@@ -43,7 +43,7 @@ public class ByteList {
         }
     }
  
-    public void addLast(byte x) {
+    public void add(byte x) {
         if (size == 0) {
             array[0] = x;
             size++;
@@ -59,7 +59,7 @@ public class ByteList {
         }
     }
  
-    public int get(int k) {
+    public Byte get(int k) {
         if (k > array.length - 1) {
             return 0;
         }
@@ -78,6 +78,21 @@ public class ByteList {
     
     public int size() {
         return size;
+    }
+    
+    public boolean isEmpty() {
+        return (size == 0);
+    }
+    
+    public byte[] getArray() {
+        byte[] newArray = new byte[size];
+        
+        if (startIndex == 0) {
+            for (int i = 0; i < size; i++) {
+                newArray[i] = array[i];
+            }
+        }   
+        return newArray;
     }
  
     private void biggerArray() {

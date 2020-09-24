@@ -1,15 +1,19 @@
 
 package OKcompress;
 
+import OKcompress.domain.ByteList;
 import OKcompress.utils.ByteWriter;
-import java.util.ArrayList;
+import com.github.jinahya.bit.io.ArrayByteInput;
+import com.github.jinahya.bit.io.BitInput;
+import com.github.jinahya.bit.io.DefaultBitInput;
+import java.io.IOException;
 
 /**
  *
  * Lempel–Ziv–Storer–Szymanski algorithm for data compression
  */
 public class LZSS {
-    public ArrayList<Byte> encode(byte[] input) {
+    public ByteList encode(byte[] input) {
         ByteWriter output = new ByteWriter();
         
         int dictionaryStartIndex = 0;
@@ -53,7 +57,7 @@ public class LZSS {
                 }               
             }
             
-            if (!coded) { // didn't found a match at least 3 bytes long
+            if (!coded) { // didn't find a match at least 3 bytes long
                 output.writeUncoded(input[i]);
             } else {
                 coded = false;
@@ -64,25 +68,44 @@ public class LZSS {
         return output.getByteArray();
     }
     
-    public ArrayList<Byte> decode(ArrayList<Byte> bytes) {
-        int n = bytes.size();
-        ArrayList<Byte> output = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            if (bytes.get(i) == 0) { // a zero byte indicates and precedes an uncoded byte
-                output.add(bytes.get(i + 1));
-                i++;
-            } else {
-                String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(' ', '0') + // get next two bytes
-                        String.format("%8s", Integer.toBinaryString(bytes.get(i + 1) & 0xFF)).replace(' ', '0');
-                int offset = Integer.parseInt(encoded.substring(1, 12), 2);
-                int length = Integer.parseInt(encoded.substring(12, 16), 2);
-                for (int j = 0; j < length; j++) {
-                    output.add(output.get(output.size() - offset));
-                }
-                i++;
+    public ByteList decode(ByteList bytes) {
+        ArrayByteInput a = new ArrayByteInput(bytes.getArray());
+        final BitInput bitInput = new DefaultBitInput(a);
+        ByteList output = new ByteList();
+//        int n = bytes.size();
+//        for (int i = 0; i < n; i++) {
+//            if (bytes.get(i) == 0) { // a zero byte indicates and precedes an uncoded byte
+//                output.add(bytes.get(i + 1));
+//                i++;
+//            } else {
+//                String encoded = String.format("%8s", Integer.toBinaryString(bytes.get(i) & 0xFF)).replace(" ", "0") + // get next two bytes
+//                        String.format("%8s", Integer.toBinaryString(bytes.get(i + 1) & 0xFF)).replace(" ", "0");
+//                int offset = Integer.parseInt(encoded.substring(1, 12), 2);
+//                int length = Integer.parseInt(encoded.substring(12, 16), 2);
+//                for (int j = 0; j < length; j++) {
+//                    output.add(output.get(output.size() - offset));
+//                }
+//                i++;
+//            }
+//        }
+        while (true) {
+            try {
+                if (bitInput.readBoolean()) { // encountered coded bytes
+                    int offset = bitInput.readInt(true, 11);
+                    int length = bitInput.readInt(true, 4);
+                    for (int j = 0; j < length; j++) {
+                        output.add(output.get(output.size() - offset));
+                    }
+                } else { // encountered an uncoded byte
+                    output.add(bitInput.readByte8());
+                }        
+            } catch(IOException ex) { // end of input
+                break;
+            } catch(ArrayIndexOutOfBoundsException e) {
+                break;
             }
         }
-        
+            
         return output;
     }
 }

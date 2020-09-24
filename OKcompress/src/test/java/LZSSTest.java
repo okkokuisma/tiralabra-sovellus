@@ -5,11 +5,11 @@
  */
 
 import OKcompress.LZSS;
+import OKcompress.domain.ByteList;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +40,7 @@ public class LZSSTest {
 
     @Test
     public void decodedOutputMatchesOriginalInput() {
-        ArrayList<Byte> decoded = encoder.decode(encoder.encode(input));
+        ByteList decoded = encoder.decode(encoder.encode(input));
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {

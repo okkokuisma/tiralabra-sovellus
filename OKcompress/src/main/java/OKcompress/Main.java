@@ -1,13 +1,14 @@
 package OKcompress;
 
 
-import OKcompress.LZSS;
+import OKcompress.domain.ByteList;
+import com.github.jinahya.bit.io.ArrayByteInput;
+import com.github.jinahya.bit.io.BitInput;
+import com.github.jinahya.bit.io.DefaultBitInput;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
 
 
@@ -18,23 +19,41 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("test.txt"));
-        byte[] bytearray = IOUtils.toByteArray(input);
-//        File file = new File("decoded.txt");
-//        file.createNewFile();
-//        FileOutputStream output = new FileOutputStream(file);
-//        System.out.println(bytearray.length);
+//        FileInputStream input = new FileInputStream(new File("test.txt"));
+//        byte[] bytearray = IOUtils.toByteArray(input);
+////        File file = new File("decoded.txt");
+////        file.createNewFile();
+////        FileOutputStream output = new FileOutputStream(file);
+////        System.out.println(bytearray.length);
 //        LZSS encoder = new LZSS();
-//        ArrayList<Byte> encoded = encoder.encode(bytearray);
+//        ByteList encoded = encoder.encode(bytearray);
 //        System.out.println(encoded.size());
-//        ArrayList<Byte> decoded = encoder.decode(encoded);
+//        ByteList decoded = encoder.decode(encoded);
 //        byte[] juum = new byte[encoded.size()];
 //        for (int i = 0; i < encoded.size(); i++) {
 //            juum[i] = encoded.get(i);
 //        }
-//        output.write(juum);
-        Huffman huf = new Huffman();
-        System.out.println(huf.encode(bytearray).size());
+////        output.write(juum);
+//        Huffman huf = new Huffman();
+//        System.out.println(huf.encode(bytearray).size());
+//        byte b = (byte)10;
+//        int bits = 0x000000FF & b; // get the bits
+//            for (int i = 0; i < 8; i++) {
+//                int a = bits & 1;
+//                if (a == 1) { // check whether the last bit is 1 or 0
+//                    System.out.println("1");
+//                } else {
+//                    System.out.println("0");
+//                }
+//                bits = bits >> 1;
+//            }
+        byte[] b = new byte[]{1,2,3};
+        ArrayByteInput a = new ArrayByteInput(b);
+        final BitInput bitInput = new DefaultBitInput(a);
+        System.out.println(bitInput.readByte8());
+        System.out.println(bitInput.readByte8());
+        System.out.println(bitInput.readByte8());
+        
     }
     
 }
