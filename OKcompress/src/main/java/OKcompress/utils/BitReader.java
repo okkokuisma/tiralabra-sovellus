@@ -12,8 +12,8 @@ package OKcompress.utils;
 public class BitReader {
     private byte[] input;
     private int index;
-    private int digits;
-    private int numDigits;
+    private int bits;
+    private int position;
     
     public BitReader(byte[] input) {
         this.input = input;
@@ -35,20 +35,20 @@ public class BitReader {
         return (byte) readInt(8);
     }
     
-    public int readBit() {
-        if (digits == -1) {
+    public int readBit() { // return next bit, -1 if at the end of input
+        if (bits == -1) {
             return -1;
         }
         int result;
-        int a = digits & 128;
+        int a = bits & 128;
         if (a == 128) { // check whether the first bit is 1 or 0
             result = 1;
         } else {
             result = 0;
         }
-        digits = digits << 1;
-        numDigits++;
-        if (numDigits == 8) {
+        bits = bits << 1;
+        position++;
+        if (position == 8) { // read all 8 bits
             nextByte();
         }
         return result;
@@ -56,11 +56,11 @@ public class BitReader {
 
     private void nextByte() {
         if (index == input.length) {
-            digits = -1;
+            bits = -1;
             return;
         }
-        digits = 0x000000FF & input[index];
-        numDigits = 0;
+        bits = 0x000000FF & input[index]; // int value of next byte
+        position = 0;
         index++;
     }
 }

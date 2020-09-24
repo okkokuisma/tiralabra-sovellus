@@ -46,7 +46,7 @@ public class LZSS {
                     }
                     
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
-                        output.writeCoded(i - j, length);
+                        output.writeLZSSCoded(i - j, length);
                         coded = true;
                         i += length - 1;
                         break;
@@ -55,7 +55,7 @@ public class LZSS {
             }
             
             if (!coded) { // didn't find a match at least 3 bytes long
-                output.writeUncoded(input[i]);
+                output.writeLZSSUncoded(input[i]);
             } else {
                 coded = false;
             }
@@ -87,15 +87,15 @@ public class LZSS {
         BitReader reader = new BitReader(bytes.getArray());
         while (true) {
             int signBit = reader.readBit();
-            if (signBit == -1) {
+            if (signBit == -1) { // end of input
                 break;
-            } else if (signBit == 1) {
+            } else if (signBit == 1) { // coded bytes
                 int offset = reader.readInt(11);
                 int length = reader.readInt(4);
                 for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
                     output.add(output.get(output.size() - offset));
                 }
-            } else {
+            } else { // uncoded byte
                 output.add(reader.readByte());
             }
         }

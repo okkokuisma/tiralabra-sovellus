@@ -44,7 +44,7 @@ public class LZSSTest {
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {
-            if (input[i] != decoded.get(i)) { // fail if the data doesn't match
+            if (input[i] != decoded.get(i)) { // fail if the data doesn't match at any point
                 fail();
             }
         }

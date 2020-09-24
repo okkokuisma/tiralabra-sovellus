@@ -29,7 +29,7 @@ public class ByteWriter {
         }
     }
     
-    public void writeUncoded(byte input) {
+    public void writeLZSSUncoded(byte input) {
         writeBit((byte) 0); // 0 bit to sign an uncoded byte
 //        String bits = String.format("%8s", Integer.toBinaryString(input & 0xFF)).replace(" ", "0");
 //
@@ -48,7 +48,7 @@ public class ByteWriter {
             }
     }
 
-    public void writeCoded(int offset, int length) {
+    public void writeLZSSCoded(int offset, int length) {
         if (offset > 2047) {
             throw new RuntimeException("Offset input over 2047");
         } else if (length > 15) {

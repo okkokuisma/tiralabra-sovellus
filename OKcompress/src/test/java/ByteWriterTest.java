@@ -30,14 +30,15 @@ public class ByteWriterTest {
     public void tearDown() {
     }
     
-//    @Test
-//    public void writeUncodedAddsZeroByteAndInput() {
-//        byte b = (byte) 10;
-//        writer.writeUncoded(b);
-//        ByteList bytes = writer.getByteArray();
-//        assertEquals(0, bytes.get(0).byteValue());
-//        assertEquals(10, bytes.get(1).byteValue());
-//    }
+    @Test
+    public void writeUncodedAddsZeroBitAndInput() {
+        byte b = (byte) 65;
+        writer.writeLZSSUncoded(b);
+        writer.close();
+        ByteList bytes = writer.getByteArray();
+        assertEquals(32, bytes.get(0).byteValue()); // byte b shifts to right (b >> 1)
+        assertEquals(-128, bytes.get(1).byteValue()); // last 1 bit of byte b leaks to next byte
+    }
     
     @Test
     public void closeAddsZeroBits() {
@@ -49,8 +50,8 @@ public class ByteWriterTest {
         writer.close();
         
         ByteList bytes = writer.getByteArray();
-        assertEquals("10000000", Integer.toBinaryString(bytes.get(0) & 0xFF));
-        assertEquals("11000000", Integer.toBinaryString(bytes.get(1) & 0xFF));
+        assertEquals(-128, bytes.get(0).byteValue());
+        assertEquals(-64, bytes.get(1).byteValue());
     }
     
     @Test
@@ -67,11 +68,11 @@ public class ByteWriterTest {
     @Test
     public void writeCodedFailsWithIllegalParameters() {
         RuntimeException offset = assertThrows(RuntimeException.class,
-                () ->  writer.writeCoded(2048, 1) // offset and length values have to fit into 11 and 4 bits respectively
+                () ->  writer.writeLZSSCoded(2048, 1) // offset and length values have to fit into 11 and 4 bits respectively
             );
         
         RuntimeException length = assertThrows(RuntimeException.class,
-                () ->  writer.writeCoded(1, 16) // offset and length values have to fit into 11 and 4 bits respectively
+                () ->  writer.writeLZSSCoded(1, 16)
             );
         
         assertTrue(offset.getMessage().contains("Offset input"));

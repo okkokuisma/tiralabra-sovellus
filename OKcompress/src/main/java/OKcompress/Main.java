@@ -3,9 +3,6 @@ package OKcompress;
 
 import OKcompress.domain.ByteList;
 import OKcompress.utils.BitReader;
-import com.github.jinahya.bit.io.ArrayByteInput;
-import com.github.jinahya.bit.io.BitInput;
-import com.github.jinahya.bit.io.DefaultBitInput;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,23 +18,24 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("test.txt"));
-        byte[] bytearray = IOUtils.toByteArray(input);
-        File file = new File("decoded.txt");
-        file.createNewFile();
-        FileOutputStream output = new FileOutputStream(file);
-        System.out.println(bytearray.length);
-        LZSS encoder = new LZSS();
-        ByteList encoded = encoder.encode(bytearray);
-        System.out.println(encoded.size());
-        ByteList decoded = encoder.decode(encoded);
-        byte[] juum = new byte[decoded.size()];
-        for (int i = 0; i < decoded.size(); i++) {
-            juum[i] = decoded.get(i);
-        }
-        output.write(juum);
-        Huffman huf = new Huffman();
-        System.out.println(huf.encode(bytearray).size());
+//        FileInputStream input = new FileInputStream(new File("test.txt"));
+//        byte[] bytearray = IOUtils.toByteArray(input);
+//        File file = new File("decoded.txt");
+//        file.createNewFile();
+//        FileOutputStream output = new FileOutputStream(file);
+//        System.out.println(bytearray.length);
+//        LZSS encoder = new LZSS();
+//        ByteList encoded = encoder.encode(bytearray);
+//        System.out.println(encoded.size());
+//        ByteList decoded = encoder.decode(encoded);
+//        byte[] juum = new byte[decoded.size()];
+//        for (int i = 0; i < decoded.size(); i++) {
+//            juum[i] = decoded.get(i);
+//        }
+//        output.write(juum);
+//        Huffman huf = new Huffman();
+//        System.out.println(huf.encode(bytearray).size());
+        System.out.println((byte) 130);
     }
     
 }
