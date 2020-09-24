@@ -22,9 +22,6 @@ public class ByteWriter {
         }
         buffer = (byte) (buffer << 1);
         buffer |= bit;
-//        int bits = 0x000000FF & buffer; // get the bits
-//        buffer = (byte) (bits >> 1);
-//        buffer |= (byte) (bit << 7);
         position++;
 
         if (position == 8) {
@@ -33,7 +30,7 @@ public class ByteWriter {
     }
     
     public void writeUncoded(byte input) {
-        writeBit((byte) 0); // 0 byte to sign an uncoded byte
+        writeBit((byte) 0); // 0 bit to sign an uncoded byte
 //        String bits = String.format("%8s", Integer.toBinaryString(input & 0xFF)).replace(" ", "0");
 //
 //        for (int i = 0; i < bits.length(); i++) {
@@ -66,7 +63,7 @@ public class ByteWriter {
 //        for (int i = 0; i < 4; i++) {
 //            writeBit((byte) Character.getNumericValue(lenBits.charAt(i)));
 //        }
-        writeBit((byte) 1); // sign bit for coded 
+        writeBit((byte) 1); // sign bit for coded bytes 
         int posBits = 0x00000FFF & offset; // get the bits
             for (int i = 0; i < 11; i++) { // match position coded into 11 bits
                 int a = posBits & 1024;
@@ -77,7 +74,7 @@ public class ByteWriter {
                 }
                 posBits = posBits << 1;
             }
-        int lenBits = 0x0000000F & length; // get the bits
+        int lenBits = 0x0000000F & length;
             for (int i = 0; i < 4; i++) { // match length coded into 4 bits
                 int a = lenBits & 8;
                 if (a == 8) { // check whether the first bit is 1 or 0
@@ -93,7 +90,7 @@ public class ByteWriter {
         if (input == 0) {
             flushByte();
         } else {
-            int bits = 0x000000FF & input; // get the bits
+            int bits = 0x000000FF & input;
             for (int i = 0; i < 8; i++) {
                 int a = bits & 128;
                 if (a == 128) { // check whether the first bit is 1 or 0

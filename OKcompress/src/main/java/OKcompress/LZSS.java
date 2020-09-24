@@ -2,11 +2,8 @@
 package OKcompress;
 
 import OKcompress.domain.ByteList;
+import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
-import com.github.jinahya.bit.io.ArrayByteInput;
-import com.github.jinahya.bit.io.BitInput;
-import com.github.jinahya.bit.io.DefaultBitInput;
-import java.io.IOException;
 
 /**
  *
@@ -69,8 +66,6 @@ public class LZSS {
     }
     
     public ByteList decode(ByteList bytes) {
-        ArrayByteInput a = new ArrayByteInput(bytes.getArray());
-        final BitInput bitInput = new DefaultBitInput(a);
         ByteList output = new ByteList();
 //        int n = bytes.size();
 //        for (int i = 0; i < n; i++) {
@@ -88,21 +83,20 @@ public class LZSS {
 //                i++;
 //            }
 //        }
+        
+        BitReader reader = new BitReader(bytes.getArray());
         while (true) {
-            try {
-                if (bitInput.readBoolean()) { // encountered coded bytes
-                    int offset = bitInput.readInt(true, 11);
-                    int length = bitInput.readInt(true, 4);
-                    for (int j = 0; j < length; j++) {
-                        output.add(output.get(output.size() - offset));
-                    }
-                } else { // encountered an uncoded byte
-                    output.add(bitInput.readByte8());
-                }        
-            } catch(IOException ex) { // end of input
+            int signBit = reader.readBit();
+            if (signBit == -1) {
                 break;
-            } catch(ArrayIndexOutOfBoundsException e) {
-                break;
+            } else if (signBit == 1) {
+                int offset = reader.readInt(11);
+                int length = reader.readInt(4);
+                for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
+                    output.add(output.get(output.size() - offset));
+                }
+            } else {
+                output.add(reader.readByte());
             }
         }
             
