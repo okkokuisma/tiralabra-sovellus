@@ -10,6 +10,7 @@ public class HuffmanNode implements Comparable<HuffmanNode> {
     public int weigth;
     public HuffmanNode leftChild;
     public HuffmanNode rightChild;
+    public int codeLength;
 
     public HuffmanNode() {
     }
