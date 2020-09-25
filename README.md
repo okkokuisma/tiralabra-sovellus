@@ -6,6 +6,7 @@ Data compression program which uses LZSS and Huffman coding.
 ## Weekly reports
 * [Week 2](https://github.com/okkokuisma/tiralabra-sovellus/blob/master/documentation/weekly_report_2.md)
 * [Week 3](https://github.com/okkokuisma/tiralabra-sovellus/blob/master/documentation/weekly_report_3.md)
+* [Week 4](https://github.com/okkokuisma/tiralabra-sovellus/blob/master/documentation/weekly_report_4.md)
 
 ## Terminal commands
 
