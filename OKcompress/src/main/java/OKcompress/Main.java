@@ -20,9 +20,9 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         FileInputStream input = new FileInputStream(new File("test.txt"));
         byte[] bytearray = IOUtils.toByteArray(input);
-//        File file = new File("decoded.txt");
-//        file.createNewFile();
-//        FileOutputStream output = new FileOutputStream(file);
+        File file = new File("decoded.txt");
+        file.createNewFile();
+        FileOutputStream output = new FileOutputStream(file);
 //        System.out.println(bytearray.length);
 //        LZSS encoder = new LZSS();
 //        ByteList encoded = encoder.encode(bytearray);
@@ -32,10 +32,20 @@ public class Main {
 //        for (int i = 0; i < decoded.size(); i++) {
 //            juum[i] = decoded.get(i);
 //        }
-//        output.write(juum);
+        String test = "go go gophers";
         Huffman huf = new Huffman();
-        System.out.println(huf.encode(bytearray).size());
-
+        System.out.println("alku: " + bytearray.length);
+        byte[] dec = huf.encode(bytearray).getArray();
+        System.out.println("koodattu: " + dec.length);
+        byte[] juum = huf.decode(dec).getArray();
+        System.out.println("loppu: " + juum.length);
+        for (int i = 0; i < bytearray.length; i++) {
+            if (bytearray[i] != juum[i]) {
+                System.out.println("buu");
+                break;
+            }
+        }
+        System.out.println(0xFF & (byte) 254);
+//        output.write(juum);
     }
-    
 }
