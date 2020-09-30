@@ -2,11 +2,8 @@
 package OKcompress;
 
 import OKcompress.domain.ByteList;
-import OKcompress.domain.HuffmanHeap;
-import OKcompress.domain.HuffmanNode;
 import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
-import com.sun.org.apache.xalan.internal.xsltc.dom.NodeCounter;
 
 /**
  *
@@ -105,10 +102,10 @@ public class Huffman {
         }
         
         int[] codeLengths = new int[256];
-        int[] pointerArray = new int[256];
+        int[] pointerArray = new int[256]; // array for pointers to other nodes in the same tree
         
         while (nodeCounter > 1) {
-            // sorting the leaf nodes by occurances (nodes with most occurances to the start)
+            // sorting nodes by occurances (nodes with most occurances to the start)
             for (int i = 0; i < nodeCounter; i++) {
                 if (nodeCounts[i] < nodeCounts[i + 1]) {
                     int swap = nodes[i];
@@ -123,18 +120,18 @@ public class Huffman {
                 }
             }
             
-            // increment bit lengths
-            int left = nodes[nodeCounter - 2];
-            int right = nodes[nodeCounter - 1];
-            while (left > 0) {
-                codeLengths[left - 1]++;
-                int next = pointerArray[left - 1];
-                if (next == 0 && right > 0) {
-                    pointerArray[left - 1] = right;
-                    next = right;
-                    right = 0;
+            // increment bit lengths of all nodes in the same tree (created when combining the last two nodes)
+            int leftNode = nodes[nodeCounter - 2];
+            int rightNode = nodes[nodeCounter - 1]; // the next pointer to be added
+            while (leftNode > 0) {
+                codeLengths[leftNode - 1]++;
+                int pointerNode = pointerArray[leftNode - 1];
+                if (pointerNode == 0 && rightNode > 0) {
+                    pointerArray[leftNode - 1] = rightNode;
+                    pointerNode = rightNode;
+                    rightNode = 0;
                 }
-                left = next;
+                leftNode = pointerNode;
             }
             
             nodeCounts[nodeCounter - 2] += nodeCounts[nodeCounter - 1]; // combine last two nodes
@@ -147,14 +144,16 @@ public class Huffman {
         int[] bitLengths = new int[16];
         for (int i = 0; i < codeLengths.length; i++) {
             if (codeLengths[i] > 0) {
-                bitLengths[codeLengths[i]]++; // 
+                bitLengths[codeLengths[i]]++; // how many instances of each code length [i] there are
             }
         }
         int[] minimumValues = createMinimumNumericalValueArray(bitLengths);
         int[] codes = new int[256];
         for (int i = 0; i < 256; i++) {
             if (codeLengths[i] > 0) {
-                codes[i] = minimumValues[codeLengths[i]]++;  
+                // code is created by incrementing the base value for each code length for each instance of that particular code length
+                // that way the symbol order remains lexicographical between symbols with the same code length
+                codes[i] = minimumValues[codeLengths[i]]++;
             }
         }
         return codes;
@@ -163,7 +162,7 @@ public class Huffman {
     private int[] createMinimumNumericalValueArray(int[] codeLengths) {
         int[] numericalValues = new int[codeLengths.length];
         int code = 0;
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++) { // counts the base value of the code for each code length
             numericalValues[i] = code;
             code = (code + codeLengths[i]) << 1;
         }
@@ -177,13 +176,13 @@ public class Huffman {
                 int code = codes[i];
                 int treeIndex = 1;
                 int codeLength = codeLengths[i];
-                int highestBit = (int)Math.pow(2, (codeLength-1));
+                int highestBit = (int) Math.pow(2, (codeLength-1));
                 for (int j = 0; j < codeLength; j++) { 
                     int a = code & highestBit;
                     if (a == highestBit) {
-                        treeIndex = 2 * treeIndex + 1;
+                        treeIndex = 2 * treeIndex + 1; // right child
                     } else {
-                        treeIndex = 2 * treeIndex;
+                        treeIndex = 2 * treeIndex; // left child
                     }
                     code = code << 1;
                 }
@@ -194,7 +193,7 @@ public class Huffman {
     }
     
     private void createFileHeader(int[] codeLengths, ByteWriter writer) {
-        for (int i = 0; i < codeLengths.length; i++) {
+        for (int i = 0; i < codeLengths.length; i++) { // store the code length of each symbol for decoding
             int codeLength = codeLengths[i];
             for (int j = 0; j < 5; j++) { 
                 int a = codeLength & 16; // code lengths into 5 bits

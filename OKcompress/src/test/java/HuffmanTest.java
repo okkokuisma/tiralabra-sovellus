@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import OKcompress.Huffman;
 import OKcompress.LZSS;
 import OKcompress.domain.ByteList;
 import java.io.File;
@@ -20,14 +21,14 @@ import static org.junit.Assert.*;
  *
  * @author ogkuisma
  */
-public class LZSSTest {
+public class HuffmanTest {
     byte[] input;
-    LZSS encoder;
+    Huffman encoder;
     
-    public LZSSTest() throws FileNotFoundException, IOException {
+    public HuffmanTest() throws FileNotFoundException, IOException {
         FileInputStream inputStream = new FileInputStream(new File("test.txt")); // 12.9 kB text file
         input = IOUtils.toByteArray(inputStream);
-        encoder = new LZSS();
+        encoder = new Huffman();
     }
     
     @Before
@@ -43,10 +44,10 @@ public class LZSSTest {
         ByteList encoded = encoder.encode(input);
         assertTrue(encoded.size() < input.length);
     }
-
+    
     @Test
     public void decodedOutputMatchesOriginalInput() {
-        ByteList decoded = encoder.decode(encoder.encode(input));
+        ByteList decoded = encoder.decode(encoder.encode(input).getArray());
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {
@@ -54,5 +55,5 @@ public class LZSSTest {
                 fail();
             }
         }
-    }
+    } 
 }

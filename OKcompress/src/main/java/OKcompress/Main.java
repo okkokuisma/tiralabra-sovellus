@@ -35,7 +35,7 @@ public class Main {
         String test = "go go gophers";
         Huffman huf = new Huffman();
         System.out.println("alku: " + bytearray.length);
-        byte[] dec = huf.encode(bytearray).getArray();
+        byte[] dec = huf.encode(test.getBytes()).getArray();
         System.out.println("koodattu: " + dec.length);
         byte[] juum = huf.decode(dec).getArray();
         System.out.println("loppu: " + juum.length);
