@@ -141,7 +141,7 @@ public class Huffman {
     }
     
     private int[] createCodeArray(int[] codeLengths) {
-        int[] bitLengths = new int[16];
+        int[] bitLengths = new int[20];
         for (int i = 0; i < codeLengths.length; i++) {
             if (codeLengths[i] > 0) {
                 bitLengths[codeLengths[i]]++; // how many instances of each code length [i] there are
@@ -151,7 +151,7 @@ public class Huffman {
         int[] codes = new int[256];
         for (int i = 0; i < 256; i++) {
             if (codeLengths[i] > 0) {
-                // code is created by incrementing the base value for each code length for each instance of that particular code length
+                // code is created by incrementing the base value of each code length for each instance of that particular code length
                 // that way the symbol order remains lexicographical between symbols with the same code length
                 codes[i] = minimumValues[codeLengths[i]]++;
             }
@@ -162,7 +162,7 @@ public class Huffman {
     private int[] createMinimumNumericalValueArray(int[] codeLengths) {
         int[] numericalValues = new int[codeLengths.length];
         int code = 0;
-        for (int i = 0; i < 16; i++) { // counts the base value of the code for each code length
+        for (int i = 0; i < 20; i++) { // counts the base value of the code for each code length
             numericalValues[i] = code;
             code = (code + codeLengths[i]) << 1;
         }
@@ -170,7 +170,8 @@ public class Huffman {
     }
     
     private int[] recreateHuffmanTree(int[] codes, int[] codeLengths) {
-        int[] huffmanTree = new int[65535];
+//        int[] huffmanTree = new int[65535];
+        int[] huffmanTree = new int[1000000];
         for (int i = 0; i < codes.length; i++) {
             if (codes[i] >= 0) {
                 int code = codes[i];
