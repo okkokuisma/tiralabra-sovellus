@@ -159,12 +159,12 @@ public class Huffman {
         return codes;
     }
     
-    private int[] createMinimumNumericalValueArray(int[] codeLengths) {
-        int[] numericalValues = new int[codeLengths.length];
+    private int[] createMinimumNumericalValueArray(int[] codeLengthOccurances) {
+        int[] numericalValues = new int[codeLengthOccurances.length];
         int code = 0;
-        for (int i = 0; i < 20; i++) { // counts the base value of the code for each code length
+        for (int i = 1; i < codeLengthOccurances.length; i++) {
+            code = (code + codeLengthOccurances[i - 1]) << 1;
             numericalValues[i] = code;
-            code = (code + codeLengths[i]) << 1;
         }
         return numericalValues;
     }
