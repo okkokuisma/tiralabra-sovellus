@@ -20,9 +20,9 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         FileInputStream input = new FileInputStream(new File("test.txt"));
         byte[] bytearray = IOUtils.toByteArray(input);
-        File file = new File("decoded.txt");
-        file.createNewFile();
-        FileOutputStream output = new FileOutputStream(file);
+//        File file = new File("decoded.txt");
+//        file.createNewFile();
+//        FileOutputStream output = new FileOutputStream(file);
 //        System.out.println(bytearray.length);
 //        LZSS encoder = new LZSS();
 //        ByteList encoded = encoder.encode(bytearray);
@@ -45,7 +45,6 @@ public class Main {
                 break;
             }
         }
-        System.out.println(0xFF & (byte) 254);
 //        output.write(juum);
     }
 }
