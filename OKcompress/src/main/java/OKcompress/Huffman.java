@@ -2,6 +2,8 @@
 package OKcompress;
 
 import OKcompress.domain.ByteList;
+import OKcompress.domain.HuffmanHeap;
+import OKcompress.domain.HuffmanNode;
 import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
 
@@ -13,7 +15,7 @@ public class Huffman {
     
     public ByteList encode(byte[] input) {
         ByteWriter writer = new ByteWriter();
-        int[] codeLengths = getCodeLengths(input);
+        int[] codeLengths = getCodeLengthsUsingHeap(input);
         int[] codes = createCodeArray(codeLengths);
         // encode
         createFileHeader(codeLengths, writer);
@@ -80,23 +82,24 @@ public class Huffman {
         return output;
     }
     
+    /**
+    * Calculates the code length for each byte value that occurs in the given input
+    *
+    * @param   input    The original, uncompressed data
+    *
+    * @return The code length of each byte value [0-255] (0 for byte values not found in input)
+    */
     private int[] getCodeLengths(byte[] input) {
-        int[] occurances = new int[256];
-        for (int i = 0; i < input.length; i++) { // check how many occurances of each individual byte there are in the input array
-            int index = 0xFF & input[i]; // get the positive index for byte
-            occurances[index]++;
-        }
-        int index = 0xFF & (byte) 254; // add an ending byte for decoding
-        occurances[index]++;
+        int[] occurrences = createByteOccurrenceArray(input);
         
         int[] nodes = new int[256];
         int[] nodeCounts = new int[256];
         int nodeCounter = 0;
         
-        for (int i = 0; i < occurances.length; i++) { 
-            if (occurances[i] != 0) {
+        for (int i = 0; i < occurrences.length; i++) { 
+            if (occurrences[i] != 0) {
                 nodes[nodeCounter] = i + 1; // add a node pointer for each symbol that occured in the input
-                nodeCounts[nodeCounter] = occurances[i]; // weigth for each node for sorting the nodes
+                nodeCounts[nodeCounter] = occurrences[i]; // weigth for each node for sorting the nodes
                 nodeCounter++;
             }
         }
@@ -140,6 +143,69 @@ public class Huffman {
         return codeLengths;
     }
     
+    /**
+    * Creates a Huffman tree using a HuffmanHeap to calculate the code length for each 
+    * byte value that occurs in the given input
+    *
+    * @param   input    The original, uncompressed data
+    *
+    * @return The code length of each byte value [0-255] (0 for byte values not found in input)
+    */
+    private int[] getCodeLengthsUsingHeap(byte[] input) {
+        HuffmanHeap huffmanTree = new HuffmanHeap();
+        
+        int[] occurrences = createByteOccurrenceArray(input);
+        
+        // create a node of each individual byte in the input array where the number of occurances is the weight of the created node
+        for (int i = 0; i < occurrences.length; i++) { 
+            if (occurrences[i] != 0) {
+                HuffmanNode node = new HuffmanNode((byte) i, occurrences[i]);
+                huffmanTree.add(node);
+            }
+        }
+        while (huffmanTree.getLast() != 1) { // create a tree which determines the code length for each byte value
+            HuffmanNode node = new HuffmanNode();
+            node.leftChild = huffmanTree.poll();
+            node.rightChild = huffmanTree.poll();
+            node.weigth = node.leftChild.weigth + node.rightChild.weigth;
+            huffmanTree.add(node);
+        }  
+        
+        int[] codeLengths = new int[256];
+        createCodeLengthArray(huffmanTree.poll(), codeLengths, 0); 
+        return codeLengths;
+    }
+    
+    /**
+    * Recursive method that returns each node's code length (depth from root node in Huffman tree)
+    *
+    * @param   node    The root of a Huffman tree
+    * @param   codeLengths    Array in which code length values are stored 
+    * @param   length   The depth of the starting node (0 if starting from root)
+    *
+    * @return The code length of each byte value in the Huffman tree
+    */
+    private void createCodeLengthArray(HuffmanNode node, int[] codeLengths, int length) {
+        if (node == null) {
+            return;
+        }
+        if (node.leftChild == null) {
+            codeLengths[0xFF & node.byteValue] = length;
+        } else {
+            length++;
+            createCodeLengthArray(node.leftChild, codeLengths, length);
+            createCodeLengthArray(node.rightChild, codeLengths, length);
+        }
+    }
+    
+    /**
+    * Calculates the final Huffman codes for each byte value in the input data using the code lenghts 
+    * calculated before
+    *
+    * @param   codeLengths    Array of code lengths for each byte value [0-255]
+    *
+    * @return The Huffman codes for each byte value [0-255]
+    */
     private int[] createCodeArray(int[] codeLengths) {
         int[] bitLengths = new int[20];
         for (int i = 0; i < codeLengths.length; i++) {
@@ -159,6 +225,32 @@ public class Huffman {
         return codes;
     }
     
+    /**
+    * Calculates how many times each byte value [0-255] occurs in the given input data
+    *
+    * @param   input    The original, uncompressed data
+    *
+    * @return Array of number of occurrences of each byte value [0-255] in the input data
+    */
+    private int[] createByteOccurrenceArray(byte[] input) {
+        int[] occurrences = new int[256];
+        for (int i = 0; i < input.length; i++) { // check how many occurances of each individual byte there are in the input array
+            int index = 0xFF & input[i]; // get the positive index for byte
+            occurrences[index]++;
+        }
+        int index = 0xFF & (byte) 254; // add an ending byte for decoding
+        occurrences[index]++;
+        return occurrences;
+    }
+    
+    /**
+    * Calculates the numerical base value of Huffman codes for each code length. This base value is shared with every Huffman code 
+    * of certain length.
+    *
+    * @param   codeLengthOccurances    Array of number of occurrences of each code length [0-20]
+    *
+    * @return Numerical base value of Huffman codes for each code length
+    */
     private int[] createMinimumNumericalValueArray(int[] codeLengthOccurances) {
         int[] numericalValues = new int[codeLengthOccurances.length];
         int code = 0;
@@ -169,6 +261,14 @@ public class Huffman {
         return numericalValues;
     }
     
+    /**
+    * Recreates a Huffman tree as an array using codes and code lengths of each byte value [0-255]
+    *
+    * @param   codes     Huffman code for each byte value [0-255]
+    * @param   codeLengths     Code length for each byte value [0-255]
+    *
+    * @return Huffman tree as an array with byte values as nodes
+    */
     private int[] recreateHuffmanTree(int[] codes, int[] codeLengths) {
 //        int[] huffmanTree = new int[65535];
         int[] huffmanTree = new int[1000000];
