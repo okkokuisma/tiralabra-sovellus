@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package OKcompress.utils;
 
 /**
- *
- * @author ogkuisma
+ * Utility class for reading a byte array as a bit stream.
  */
 public class BitReader {
     private byte[] input;
@@ -21,6 +16,13 @@ public class BitReader {
         nextByte();
     }
     
+    /**
+    * Reads next {bits} bits as an unsigned int.
+    *
+    * @param   bits    The number of bits to be read
+    *
+    * @return Value of read bits as an unsigned int
+    */
     public int readInt(int bits) { // returns a {bits} bit unsigned int
         int value = 0;
         for (int i = 0; i < bits; i++) {
@@ -31,11 +33,21 @@ public class BitReader {
         return value;
     }
     
+    /**
+    * Reads next 8 bits as a byte.
+    *
+    * @return Next 8 bits as a byte
+    */
     public byte readByte() {
         return (byte) readInt(8);
     }
     
-    public int readBit() { // return next bit, -1 if at the end of input
+    /**
+    * Reads the next bit.
+    *
+    * @return The value of next bit, -1 if at the end of input
+    */
+    public int readBit() {
         if (bits == -1) {
             return -1;
         }

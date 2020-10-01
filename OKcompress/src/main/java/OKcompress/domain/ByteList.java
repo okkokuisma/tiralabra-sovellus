@@ -4,8 +4,7 @@ package OKcompress.domain;
 import java.util.Arrays;
 
 /**
- *
- * @author ogkuisma
+ * A dynamic list structure for storing bytes.
  */
 public class ByteList {
     private byte[] array;
@@ -20,37 +19,47 @@ public class ByteList {
         size = 0;
     }
     
-    public void addFirst(byte x) {
+    /**
+    * Adds a byte to the front of the list.
+    * 
+    * @param    added    Byte to be added
+    */
+    public void addFirst(byte added) {
         if (size == 0) {
-            array[0] = x;
+            array[0] = added;
             size++;
             return;
         }
         
         if (startIndex == 0) {
             startIndex = array.length - 1;
-            array[startIndex] = x;
+            array[startIndex] = added;
             size++;
             return;
         }
         
         startIndex--;
         size++;
-        array[startIndex] = x;
+        array[startIndex] = added;
         
         if (size >= ((array.length / 4) * 3)) {
             biggerArray();
         }
     }
- 
-    public void add(byte x) {
+    
+    /**
+    * Adds a byte to the end of the list.
+    * 
+    * @param    added    Byte to be added
+    */
+    public void add(byte added) {
         if (size == 0) {
-            array[0] = x;
+            array[0] = added;
             size++;
             return;
         }
         
-        array[endIndex + 1] = x;
+        array[endIndex + 1] = added;
         endIndex++;
         size++;
         
@@ -58,7 +67,14 @@ public class ByteList {
             biggerArray();
         }
     }
- 
+    
+    /**
+    * Returns the byte in the given index.
+    * 
+    * @param    k    Index
+    * 
+    * @return The byte in the given index
+    */
     public Byte get(int k) {
         if (k > array.length - 1) {
             return 0;
@@ -76,14 +92,23 @@ public class ByteList {
         }
     }
     
+    /**
+    * @return The number of bytes in this ByteList
+    */
     public int size() {
         return size;
     }
     
+    /**
+    * @return 1 if this ByteList is empty, 0 if there's at least one byte stored
+    */
     public boolean isEmpty() {
         return (size == 0);
     }
     
+    /**
+    * @return The bytes in this ByteList as a byte array
+    */
     public byte[] getArray() {
         byte[] newArray = new byte[size];
         
@@ -94,7 +119,10 @@ public class ByteList {
         }   
         return newArray;
     }
- 
+    
+    /**
+    * Moves the stored bytes to a bigger array when the current one is filling up.
+    */
     private void biggerArray() {
         byte[] newArray = new byte[array.length + (array.length / 2)];
         

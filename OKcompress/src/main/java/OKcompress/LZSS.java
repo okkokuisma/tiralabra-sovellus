@@ -7,7 +7,7 @@ import OKcompress.utils.ByteWriter;
 
 /**
  *
- * Lempel–Ziv–Storer–Szymanski algorithm for data compression
+ * Lempel–Ziv–Storer–Szymanski algorithm for data compression and decompression.
  */
 public class LZSS {
     public ByteList encode(byte[] input) {
@@ -62,7 +62,7 @@ public class LZSS {
         }
         
         output.close();
-        return output.getByteArray();
+        return output.getBytes();
     }
     
     public ByteList decode(ByteList bytes) {

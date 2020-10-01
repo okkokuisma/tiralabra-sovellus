@@ -1,21 +1,21 @@
-/*
- Utility class for writing individual bits to a byte
- */
 package OKcompress.utils;
 
 import OKcompress.domain.ByteList;
 
+/**
+ * Utility class for writing individual bits to a byte.
+ */
 public class ByteWriter {
 
     byte buffer;
     byte position;
-    ByteList byteArray;
+    ByteList output;
 
     public ByteWriter() {
         buffer = 0x00;
-        byteArray = new ByteList();
+        output = new ByteList();
     }
-
+    
     public void writeBit(byte bit) {
         if (!(bit == 0 || bit == 1)) {
             throw new RuntimeException("A bit can only be a 1 or 0");
@@ -29,13 +29,14 @@ public class ByteWriter {
         }
     }
     
+    /**
+    * Writes the given byte with a sign bit 0 preceding it.
+    *
+    * @param   input    Byte to be written
+    */
     public void writeLZSSUncoded(byte input) {
         writeBit((byte) 0); // 0 bit to sign an uncoded byte
-//        String bits = String.format("%8s", Integer.toBinaryString(input & 0xFF)).replace(" ", "0");
-//
-//        for (int i = 0; i < bits.length(); i++) {
-//            writeBit((byte) Character.getNumericValue(bits.charAt(i)));
-//        
+
         int bits = 0x000000FF & input; // get the bits
             for (int i = 0; i < 8; i++) {
                 int a = bits & 128;
@@ -47,22 +48,20 @@ public class ByteWriter {
                 bits = bits << 1;
             }
     }
-
+    
+    /**
+    * Writes a (offset, length) pair with given offset and length values and a sign bit 1 preceding it.
+    *
+    * @param   offset    Offset value of found match
+    * @param   length    Length value of found match
+    */
     public void writeLZSSCoded(int offset, int length) {
         if (offset > 2047) {
             throw new RuntimeException("Offset input over 2047");
         } else if (length > 15) {
             throw new RuntimeException("Length input over 15");
         }
-//        String posBits = String.format("%11s", Integer.toBinaryString(offset & 0xFFF)).replace(" ", "0"); // match position coded into 11 bits
-//        String lenBits = String.format("%4s", Integer.toBinaryString(length & 0xF)).replace(" ", "0"); // match length coded into 4 bits
-//        writeBit((byte) 1); // sign bit for coded 
-//        for (int i = 0; i < 11; i++) {
-//            writeBit((byte) Character.getNumericValue(posBits.charAt(i)));
-//        }
-//        for (int i = 0; i < 4; i++) {
-//            writeBit((byte) Character.getNumericValue(lenBits.charAt(i)));
-//        }
+
         writeBit((byte) 1); // sign bit for coded bytes 
         int posBits = 0x00000FFF & offset; // get the bits
             for (int i = 0; i < 11; i++) { // match position coded into 11 bits
@@ -86,6 +85,11 @@ public class ByteWriter {
             }
     }
     
+    /**
+    * Writes a byte without any sign bit preceding it.
+    *
+    * @param   input    Byte to be written
+    */
     public void addByte(byte input) {
         if (input == 0) {
             flushByte();
@@ -102,21 +106,24 @@ public class ByteWriter {
             }
         }
     }
-
+    
+    /**
+    * Adds zero bits as padding to the end of ByteList.
+    */
     public void close() {
         if (position != 0) {
             buffer = (byte) (buffer << (8 - position));
             flushByte();
         }
     }
-
+    
     private void flushByte() {
-        byteArray.add(buffer);
+        output.add(buffer);
         buffer = 0x00;
         position = 0;
     }
     
-    public ByteList getByteArray() {
-        return byteArray;
+    public ByteList getBytes() {
+        return output;
     }
 }

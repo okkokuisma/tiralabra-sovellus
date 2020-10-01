@@ -8,8 +8,7 @@ import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
 
 /**
- *
- * Huffman coding 
+ * Data compression and decompression using Huffman coding.
  */
 public class Huffman {
     
@@ -17,7 +16,6 @@ public class Huffman {
         ByteWriter writer = new ByteWriter();
         int[] codeLengths = getCodeLengthsUsingHeap(input);
         int[] codes = createCodeArray(codeLengths);
-        // encode
         createFileHeader(codeLengths, writer);
         for (int i = 0; i < input.length; i++) {
             int code = codes[0xFF & input[i]];
@@ -45,7 +43,7 @@ public class Huffman {
             }
             code = code << 1;               
         }
-        return writer.getByteArray();
+        return writer.getBytes();
     }
     
     public ByteList decode(byte[] input) {
@@ -83,7 +81,7 @@ public class Huffman {
     }
     
     /**
-    * Calculates the code length for each byte value that occurs in the given input
+    * Calculates the code length for each byte value that occurs in the given input.
     *
     * @param   input    The original, uncompressed data
     *
@@ -145,7 +143,7 @@ public class Huffman {
     
     /**
     * Creates a Huffman tree using a HuffmanHeap to calculate the code length for each 
-    * byte value that occurs in the given input
+    * byte value that occurs in the given input.
     *
     * @param   input    The original, uncompressed data
     *
@@ -167,7 +165,7 @@ public class Huffman {
             HuffmanNode node = new HuffmanNode();
             node.leftChild = huffmanTree.poll();
             node.rightChild = huffmanTree.poll();
-            node.weigth = node.leftChild.weigth + node.rightChild.weigth;
+            node.weight = node.leftChild.weight + node.rightChild.weight;
             huffmanTree.add(node);
         }  
         
@@ -177,7 +175,7 @@ public class Huffman {
     }
     
     /**
-    * Recursive method that returns each node's code length (depth from root node in Huffman tree)
+    * Recursive method that returns each node's code length (depth from root node in Huffman tree).
     *
     * @param   node    The root of a Huffman tree
     * @param   codeLengths    Array in which code length values are stored 
@@ -199,8 +197,8 @@ public class Huffman {
     }
     
     /**
-    * Calculates the final Huffman codes for each byte value in the input data using the code lenghts 
-    * calculated before
+    * Calculates the final Huffman codes for each byte value in the input data using the code lengths
+    * calculated before.
     *
     * @param   codeLengths    Array of code lengths for each byte value [0-255]
     *
@@ -226,7 +224,7 @@ public class Huffman {
     }
     
     /**
-    * Calculates how many times each byte value [0-255] occurs in the given input data
+    * Calculates how many times each byte value [0-255] occurs in the given input data.
     *
     * @param   input    The original, uncompressed data
     *
@@ -262,7 +260,7 @@ public class Huffman {
     }
     
     /**
-    * Recreates a Huffman tree as an array using codes and code lengths of each byte value [0-255]
+    * Recreates a Huffman tree as an array using codes and code lengths of each byte value [0-255].
     *
     * @param   codes     Huffman code for each byte value [0-255]
     * @param   codeLengths     Code length for each byte value [0-255]

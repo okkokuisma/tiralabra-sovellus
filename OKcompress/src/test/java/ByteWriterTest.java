@@ -35,7 +35,7 @@ public class ByteWriterTest {
         byte b = (byte) 65;
         writer.writeLZSSUncoded(b);
         writer.close();
-        ByteList bytes = writer.getByteArray();
+        ByteList bytes = writer.getBytes();
         assertEquals(32, bytes.get(0).byteValue()); // byte b shifts to right (b >> 1)
         assertEquals(-128, bytes.get(1).byteValue()); // last 1 bit of byte b leaks to next byte
     }
@@ -49,7 +49,7 @@ public class ByteWriterTest {
         writer.writeBit((byte) 1);
         writer.close();
         
-        ByteList bytes = writer.getByteArray();
+        ByteList bytes = writer.getBytes();
         assertEquals(-128, bytes.get(0).byteValue());
         assertEquals(-64, bytes.get(1).byteValue());
     }
@@ -59,10 +59,10 @@ public class ByteWriterTest {
         for (int i = 0; i < 7; i++) {
             writer.writeBit((byte) 1);
         }
-        assertTrue(writer.getByteArray().isEmpty());
+        assertTrue(writer.getBytes().isEmpty());
 
         writer.writeBit((byte) 1);
-        assertTrue(writer.getByteArray().size() == 1);
+        assertTrue(writer.getBytes().size() == 1);
     }
 
     @Test

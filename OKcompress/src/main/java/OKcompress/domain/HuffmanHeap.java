@@ -2,8 +2,7 @@
 package OKcompress.domain;
 
 /**
- *
- * @author ogkuisma
+ * Small minimum heap structure used to create Huffman trees and determine Huffman code lengths.
  */
 public class HuffmanHeap {
     HuffmanNode[] heap;
@@ -14,10 +13,20 @@ public class HuffmanHeap {
         last = 0;
     }
     
+    /**
+    * Returns the root node without removing it from the heap.
+    * 
+    * @return The root node
+    */
     public HuffmanNode peek() {
         return heap[1];
     }
     
+    /**
+    * Returns the root node and removes it from the heap.
+    * 
+    * @return The root node
+    */
     public HuffmanNode poll() {
         HuffmanNode returnValue = heap[1];
         heap[1] = heap[last];
@@ -26,6 +35,11 @@ public class HuffmanHeap {
         return returnValue;
     }
     
+    /**
+    * Inserts a new node to the heap.
+    * 
+    * @param    added    Node to be added
+    */
     public void add(HuffmanNode added) {
         last++;
         int index = last;
@@ -38,6 +52,11 @@ public class HuffmanHeap {
         heap[index] = added;
     }
     
+    /**
+    * Recursive method that moves a node down in the heap until the heap property is satisfied again.
+    * 
+    * @param    index    Always gets the value 1 when called the first time (index of the root node)
+    */
     private void moveDown(int index) {
         int smallerChild;
         if (left(index) == 0) {
@@ -59,6 +78,9 @@ public class HuffmanHeap {
         }
     }
     
+    /**
+    * @return The number of nodes in this heap
+    */
     public int getLast() {
         return last;
     }
