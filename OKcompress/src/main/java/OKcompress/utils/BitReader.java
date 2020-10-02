@@ -40,7 +40,7 @@ public class BitReader {
     */
     public int readByte() {
         if (index == input.length && position != 0) {
-            return 257;
+            return 256;
         }
         return readInt(8);
     }

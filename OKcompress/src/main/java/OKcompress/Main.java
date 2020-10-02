@@ -18,7 +18,7 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("test.txt"));
+        FileInputStream input = new FileInputStream(new File("alice29.txt"));
         byte[] bytearray = IOUtils.toByteArray(input);
 //        File file = new File("decoded.txt");
 //        file.createNewFile();
@@ -43,6 +43,12 @@ public class Main {
 //            }
 //        }
 //        output.write(juum);
-        
+        System.out.println("Original file size: " + bytearray.length);
+        for (int i = 8; i < 17; i++) {
+            LZSS encoder = new LZSS(i, 3);
+            ByteList enc = encoder.encode(bytearray);
+            double rate = (double)enc.size() / bytearray.length * 100;
+            System.out.println(i + " | " + enc.size() + " | " + rate);
+        }
     }
 }

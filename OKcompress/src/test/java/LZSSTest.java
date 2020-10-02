@@ -25,9 +25,9 @@ public class LZSSTest {
     LZSS encoder;
     
     public LZSSTest() throws FileNotFoundException, IOException {
-        FileInputStream inputStream = new FileInputStream(new File("test.txt")); // 12.9 kB text file
+        FileInputStream inputStream = new FileInputStream(new File("alice29.txt")); // 12.9 kB text file
         input = IOUtils.toByteArray(inputStream);
-        encoder = new LZSS(11, 4);
+        encoder = new LZSS(12, 3);
     }
     
     @Before

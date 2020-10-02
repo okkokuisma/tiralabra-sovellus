@@ -37,7 +37,7 @@ public class LZSS {
                     int inputIndex = i;
                     int dictionaryIndex = j;
                     while (true) { // check how long the match is
-                        if (length > (maxLength - 1)) { // max length for match is 15
+                        if (length > (maxLength - 1)) {
                             break;
                         }
                         
@@ -79,9 +79,6 @@ public class LZSS {
         ByteList output = new ByteList();    
         BitReader reader = new BitReader(bytes.getArray());
         while (true) {
-//            if (output.size() >= 12890) {
-//                System.out.println("moi");
-//            }
             int signBit = reader.readBit();
             if (signBit == -1) { // end of input
                 break;
@@ -93,7 +90,7 @@ public class LZSS {
                 }
             } else { // uncoded byte
                 int nextByte = reader.readByte();
-                if (nextByte < 257) {
+                if (nextByte < 256) {
                     output.add((byte) nextByte);
                 }
             }
