@@ -47,12 +47,12 @@ public class BitReaderTest {
     
     @Test
     public void readByteReturnsRightValue() {
-        assertEquals(65, reader.readByte());
+        assertEquals(65, (byte) reader.readByte());
         reader.readBit(); // remove a bit
-        assertEquals(-126, reader.readByte());
+        assertEquals(-126, (byte) reader.readByte());
         for (int i = 0; i < 4; i++) { // remove 4 bits
             reader.readBit();
         }
-        assertEquals(40, reader.readByte());
+        assertEquals(40, (byte) reader.readByte());
     }
 }

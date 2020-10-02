@@ -65,18 +65,18 @@ public class ByteWriterTest {
         assertTrue(writer.getBytes().size() == 1);
     }
 
-    @Test
-    public void writeCodedFailsWithIllegalParameters() {
-        RuntimeException offset = assertThrows(RuntimeException.class,
-                () ->  writer.writeLZSSCoded(2048, 1) // offset and length values have to fit into 11 and 4 bits respectively
-            );
-        
-        RuntimeException length = assertThrows(RuntimeException.class,
-                () ->  writer.writeLZSSCoded(1, 16)
-            );
-        
-        assertTrue(offset.getMessage().contains("Offset input"));
-        assertTrue(length.getMessage().contains("Length input"));
-         
-    }
+//    @Test
+//    public void writeCodedFailsWithIllegalParameters() {
+//        RuntimeException offset = assertThrows(RuntimeException.class,
+//                () ->  writer.writeLZSSCoded(2048, 1) // offset and length values have to fit into 11 and 4 bits respectively
+//            );
+//        
+//        RuntimeException length = assertThrows(RuntimeException.class,
+//                () ->  writer.writeLZSSCoded(1, 16)
+//            );
+//        
+//        assertTrue(offset.getMessage().contains("Offset input"));
+//        assertTrue(length.getMessage().contains("Length input"));
+//         
+//    }
 }

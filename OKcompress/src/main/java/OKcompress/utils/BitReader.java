@@ -17,13 +17,13 @@ public class BitReader {
     }
     
     /**
-    * Reads next {bits} bits as an unsigned int.
+    * Reads next bits as an unsigned int, number of bits given as a parameter.
     *
     * @param   bits    The number of bits to be read
     *
-    * @return Value of read bits as an unsigned int
+    * @return Value of next bits as an unsigned int.
     */
-    public int readInt(int bits) { // returns a {bits} bit unsigned int
+    public int readInt(int bits) {
         int value = 0;
         for (int i = 0; i < bits; i++) {
             if (readBit() == 1) {
@@ -38,8 +38,11 @@ public class BitReader {
     *
     * @return Next 8 bits as a byte
     */
-    public byte readByte() {
-        return (byte) readInt(8);
+    public int readByte() {
+        if (index == input.length && position != 0) {
+            return 257;
+        }
+        return readInt(8);
     }
     
     /**

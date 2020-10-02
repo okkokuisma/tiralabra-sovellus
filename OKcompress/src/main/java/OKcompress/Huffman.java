@@ -23,7 +23,7 @@ public class Huffman {
             int highestBit = (int) Math.pow(2, (codeLength-1));
             for (int j = 0; j < codeLength; j++) { 
                 int a = code & highestBit;
-                if (a == highestBit) { // check whether the first bit is 1 or 0
+                if (a == highestBit) {
                     writer.writeBit((byte) 1);
                 } else {
                     writer.writeBit((byte) 0);
@@ -36,7 +36,7 @@ public class Huffman {
         int highestBit = (int) Math.pow(2, (codeLength-1));
         for (int j = 0; j < codeLength; j++) { 
             int a = code & highestBit;
-            if (a == highestBit) { // check whether the first bit is 1 or 0
+            if (a == highestBit) {
                 writer.writeBit((byte) 1);
             } else {
                 writer.writeBit((byte) 0);
@@ -64,7 +64,6 @@ public class Huffman {
                 treeIndex = 2 * treeIndex;
             }
             if (nextBit == -1) {
-                
                 break;
             }
             if (huffmanTree[treeIndex] > 0) {
@@ -81,65 +80,65 @@ public class Huffman {
     }
     
     /**
-    * Calculates the code length for each byte value that occurs in the given input.
-    *
-    * @param   input    The original, uncompressed data
-    *
-    * @return The code length of each byte value [0-255] (0 for byte values not found in input)
-    */
-    private int[] getCodeLengths(byte[] input) {
-        int[] occurrences = createByteOccurrenceArray(input);
-        
-        int[] nodes = new int[256];
-        int[] nodeCounts = new int[256];
-        int nodeCounter = 0;
-        
-        for (int i = 0; i < occurrences.length; i++) { 
-            if (occurrences[i] != 0) {
-                nodes[nodeCounter] = i + 1; // add a node pointer for each symbol that occured in the input
-                nodeCounts[nodeCounter] = occurrences[i]; // weigth for each node for sorting the nodes
-                nodeCounter++;
-            }
-        }
-        
-        int[] codeLengths = new int[256];
-        int[] pointerArray = new int[256]; // array for pointers to other nodes in the same tree
-        
-        while (nodeCounter > 1) {
-            // sorting nodes by occurances (nodes with most occurances to the start)
-            for (int i = 0; i < nodeCounter; i++) {
-                if (nodeCounts[i] < nodeCounts[i + 1]) {
-                    int swap = nodes[i];
-                    nodes[i] = nodes[i + 1];
-                    nodes[i + 1] = swap;
-                    swap = nodeCounts[i];
-                    nodeCounts[i] = nodeCounts[i + 1];
-                    nodeCounts[i + 1] = swap;
-                    if (i > 0) {
-                        i = i - 2;
-                    }
-                }
-            }
-            
-            // increment bit lengths of all nodes in the same tree (created when combining the last two nodes)
-            int leftNode = nodes[nodeCounter - 2];
-            int rightNode = nodes[nodeCounter - 1]; // the next pointer to be added
-            while (leftNode > 0) {
-                codeLengths[leftNode - 1]++;
-                int pointerNode = pointerArray[leftNode - 1];
-                if (pointerNode == 0 && rightNode > 0) {
-                    pointerArray[leftNode - 1] = rightNode;
-                    pointerNode = rightNode;
-                    rightNode = 0;
-                }
-                leftNode = pointerNode;
-            }
-            
-            nodeCounts[nodeCounter - 2] += nodeCounts[nodeCounter - 1]; // combine last two nodes
-            nodeCounter--;
-        }
-        return codeLengths;
-    }
+//    * Calculates the code length for each byte value that occurs in the given input.
+//    *
+//    * @param   input    The original, uncompressed data
+//    *
+//    * @return The code length of each byte value [0-255] (0 for byte values not found in input)
+//    */
+//    private int[] getCodeLengths(byte[] input) {
+//        int[] occurrences = createByteOccurrenceArray(input);
+//        
+//        int[] nodes = new int[256];
+//        int[] nodeCounts = new int[256];
+//        int nodeCounter = 0;
+//        
+//        for (int i = 0; i < occurrences.length; i++) { 
+//            if (occurrences[i] != 0) {
+//                nodes[nodeCounter] = i + 1; // add a node pointer for each symbol that occured in the input
+//                nodeCounts[nodeCounter] = occurrences[i]; // weigth for each node for sorting the nodes
+//                nodeCounter++;
+//            }
+//        }
+//        
+//        int[] codeLengths = new int[256];
+//        int[] pointerArray = new int[256]; // array for pointers to other nodes in the same tree
+//        
+//        while (nodeCounter > 1) {
+//            // sorting nodes by occurances (nodes with most occurances to the start)
+//            for (int i = 0; i < nodeCounter; i++) {
+//                if (nodeCounts[i] < nodeCounts[i + 1]) {
+//                    int swap = nodes[i];
+//                    nodes[i] = nodes[i + 1];
+//                    nodes[i + 1] = swap;
+//                    swap = nodeCounts[i];
+//                    nodeCounts[i] = nodeCounts[i + 1];
+//                    nodeCounts[i + 1] = swap;
+//                    if (i > 0) {
+//                        i = i - 2;
+//                    }
+//                }
+//            }
+//            
+//            // increment bit lengths of all nodes in the same tree (created when combining the last two nodes)
+//            int leftNode = nodes[nodeCounter - 2];
+//            int rightNode = nodes[nodeCounter - 1]; // the next pointer to be added
+//            while (leftNode > 0) {
+//                codeLengths[leftNode - 1]++;
+//                int pointerNode = pointerArray[leftNode - 1];
+//                if (pointerNode == 0 && rightNode > 0) {
+//                    pointerArray[leftNode - 1] = rightNode;
+//                    pointerNode = rightNode;
+//                    rightNode = 0;
+//                }
+//                leftNode = pointerNode;
+//            }
+//            
+//            nodeCounts[nodeCounter - 2] += nodeCounts[nodeCounter - 1]; // combine last two nodes
+//            nodeCounter--;
+//        }
+//        return codeLengths;
+//    }
     
     /**
     * Creates a Huffman tree using a HuffmanHeap to calculate the code length for each 
@@ -175,7 +174,7 @@ public class Huffman {
     }
     
     /**
-    * Recursive method that returns each node's code length (depth from root node in Huffman tree).
+    * Recursive method that checks each node's code length (depth from root node in Huffman tree).
     *
     * @param   node    The root of a Huffman tree
     * @param   codeLengths    Array in which code length values are stored 
@@ -197,12 +196,13 @@ public class Huffman {
     }
     
     /**
-    * Calculates the final Huffman codes for each byte value in the input data using the code lengths
+    * Calculates integer values of the final Huffman codes for each byte value in the input data using the code lengths
     * calculated before.
     *
     * @param   codeLengths    Array of code lengths for each byte value [0-255]
     *
-    * @return The Huffman codes for each byte value [0-255]
+    * @return The Huffman codes for each byte value [0-255] as integers. The actual bits of the code
+    * are determined based on the code lengths.
     */
     private int[] createCodeArray(int[] codeLengths) {
         int[] bitLengths = new int[20];
@@ -211,7 +211,7 @@ public class Huffman {
                 bitLengths[codeLengths[i]]++; // how many instances of each code length [i] there are
             }
         }
-        int[] minimumValues = createMinimumNumericalValueArray(bitLengths);
+        int[] minimumValues = createMinimumNumericalCodeValueArray(bitLengths);
         int[] codes = new int[256];
         for (int i = 0; i < 256; i++) {
             if (codeLengths[i] > 0) {
@@ -228,7 +228,7 @@ public class Huffman {
     *
     * @param   input    The original, uncompressed data
     *
-    * @return Array of number of occurrences of each byte value [0-255] in the input data
+    * @return Array of number of occurrences of each byte value [0-255] in the input data.
     */
     private int[] createByteOccurrenceArray(byte[] input) {
         int[] occurrences = new int[256];
@@ -247,9 +247,9 @@ public class Huffman {
     *
     * @param   codeLengthOccurances    Array of number of occurrences of each code length [0-20]
     *
-    * @return Numerical base value of Huffman codes for each code length
+    * @return Numerical base value of Huffman codes for each code length.
     */
-    private int[] createMinimumNumericalValueArray(int[] codeLengthOccurances) {
+    private int[] createMinimumNumericalCodeValueArray(int[] codeLengthOccurances) {
         int[] numericalValues = new int[codeLengthOccurances.length];
         int code = 0;
         for (int i = 1; i < codeLengthOccurances.length; i++) {

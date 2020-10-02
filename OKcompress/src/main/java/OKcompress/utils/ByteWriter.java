@@ -55,34 +55,55 @@ public class ByteWriter {
     * @param   offset    Offset value of found match
     * @param   length    Length value of found match
     */
-    public void writeLZSSCoded(int offset, int length) {
-        if (offset > 2047) {
-            throw new RuntimeException("Offset input over 2047");
-        } else if (length > 15) {
-            throw new RuntimeException("Length input over 15");
-        }
+    public void writeLZSSCoded(int offset, int length, int offsetBits, int lengthBits) {
+//        if (offset > 2047) {
+//            throw new RuntimeException("Offset input over 2047");
+//        } else if (length > 15) {
+//            throw new RuntimeException("Length input over 15");
+//        }
 
+//        writeBit((byte) 1); // sign bit for coded bytes 
+//        int posBits = 0x00000FFF & offset; // get the bits
+//            for (int i = 0; i < 11; i++) { // match position coded into 11 bits
+//                int a = posBits & 1024;
+//                if (a == 1024) { // check whether the first bit is 1 or 0
+//                    writeBit((byte) 1);
+//                } else {
+//                    writeBit((byte) 0);
+//                }
+//                posBits = posBits << 1;
+//            }
         writeBit((byte) 1); // sign bit for coded bytes 
-        int posBits = 0x00000FFF & offset; // get the bits
-            for (int i = 0; i < 11; i++) { // match position coded into 11 bits
-                int a = posBits & 1024;
-                if (a == 1024) { // check whether the first bit is 1 or 0
-                    writeBit((byte) 1);
-                } else {
-                    writeBit((byte) 0);
-                }
-                posBits = posBits << 1;
+        int highestBit = (int) Math.pow(2, (offsetBits - 1)); // get the bits
+        for (int i = 0; i < offsetBits; i++) { // match position coded into 11 bits
+            int a = offset & highestBit;
+            if (a == highestBit) { // check whether the first bit is 1 or 0
+                writeBit((byte) 1);
+            } else {
+                writeBit((byte) 0);
             }
-        int lenBits = 0x0000000F & length;
-            for (int i = 0; i < 4; i++) { // match length coded into 4 bits
-                int a = lenBits & 8;
-                if (a == 8) { // check whether the first bit is 1 or 0
-                    writeBit((byte) 1);
-                } else {
-                    writeBit((byte) 0);
-                }
-                lenBits = lenBits << 1;
+            offset = offset << 1;
+        }
+//        int lenBits = 0x0000000F & length;
+//            for (int i = 0; i < 4; i++) { // match length coded into 4 bits
+//                int a = lenBits & 8;
+//                if (a == 8) { // check whether the first bit is 1 or 0
+//                    writeBit((byte) 1);
+//                } else {
+//                    writeBit((byte) 0);
+//                }
+//                lenBits = lenBits << 1;
+//            }
+        highestBit = (int) Math.pow(2, (lengthBits - 1));
+        for (int i = 0; i < lengthBits; i++) { // match length coded into 4 bits
+            int a = length & highestBit;
+            if (a == highestBit) { // check whether the first bit is 1 or 0
+                writeBit((byte) 1);
+            } else {
+                writeBit((byte) 0);
             }
+            length = length << 1;
+        }
     }
     
     /**

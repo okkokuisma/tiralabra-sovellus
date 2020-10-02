@@ -10,16 +10,26 @@ import OKcompress.utils.ByteWriter;
  * Lempel–Ziv–Storer–Szymanski algorithm for data compression and decompression.
  */
 public class LZSS {
+    
+    private int offsetBits;
+    private int lengthBits;
+    
+    public LZSS(int offsetBits, int lengthBits) {
+        this.offsetBits = offsetBits;
+        this.lengthBits = lengthBits;
+    }
+    
     public ByteList encode(byte[] input) {
         ByteWriter output = new ByteWriter();
-        
+        int maxOffset = (int) Math.pow(2, offsetBits) - 1;
+        int maxLength = (int) Math.pow(2, lengthBits) - 1;
         int dictionaryStartIndex = 0;
         int dictionaryEndIndex = -1;
         boolean coded = false;
         for (int i = 0; i < input.length; i++) {
             dictionaryEndIndex = i - 1;
-            if (i > 2046) {
-                dictionaryStartIndex = dictionaryEndIndex - 2046;
+            if (i > maxOffset) {
+                dictionaryStartIndex = i - maxOffset;
             }
             for (int j = dictionaryStartIndex; j <= dictionaryEndIndex; j++) {
                 if (input[i] == input[j]) { // found a match
@@ -27,7 +37,7 @@ public class LZSS {
                     int inputIndex = i;
                     int dictionaryIndex = j;
                     while (true) { // check how long the match is
-                        if (length > 14) { // max length for match is 15
+                        if (length > (maxLength - 1)) { // max length for match is 15
                             break;
                         }
                         
@@ -46,7 +56,7 @@ public class LZSS {
                     }
                     
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
-                        output.writeLZSSCoded(i - j, length);
+                        output.writeLZSSCoded(i - j, length, offsetBits, lengthBits);
                         coded = true;
                         i += length - 1;
                         break;
@@ -69,20 +79,26 @@ public class LZSS {
         ByteList output = new ByteList();    
         BitReader reader = new BitReader(bytes.getArray());
         while (true) {
+//            if (output.size() >= 12890) {
+//                System.out.println("moi");
+//            }
             int signBit = reader.readBit();
             if (signBit == -1) { // end of input
                 break;
             } else if (signBit == 1) { // coded bytes
-                int offset = reader.readInt(11);
-                int length = reader.readInt(4);
+                int offset = reader.readInt(offsetBits);
+                int length = reader.readInt(lengthBits);
                 for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
                     output.add(output.get(output.size() - offset));
                 }
             } else { // uncoded byte
-                output.add(reader.readByte());
+                int nextByte = reader.readByte();
+                if (nextByte < 257) {
+                    output.add((byte) nextByte);
+                }
             }
         }
-            
+        
         return output;
     }
 }
