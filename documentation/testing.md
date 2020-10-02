@@ -4,7 +4,9 @@ Tests were performed with 152,1 kB text file of the book 'Alice's adventures in 
 First set of test were run with the number of length bits set as 4, the default number. The test file was encoded with different number of offset bits.
 
 Results:
+
 Original file size: 152089
+
 Offset bits | Compressed file size | compression rate (compressed / original)
 8 | 113635 | 74.7
 9 | 101441 | 66.7
@@ -20,8 +22,11 @@ Seems that the best compression rate is achieved with the number of offset bits 
 
 Next set of test were run with the number of offset bits set as 11, the default number while changing the number of length bits.
 
+
 Results:
+
 Original file size: 152089
+
 Length bits | Compressed file size | compression rate (compressed / original)
 2 | 102885 | 67.64789037997488
 3 | 87664 | 57.63993451202914
