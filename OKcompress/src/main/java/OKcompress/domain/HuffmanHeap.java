@@ -44,10 +44,14 @@ public class HuffmanHeap {
         last++;
         int index = last;
         if (index > 1) {
-            while (index > 1 & added.compareTo(heap[parent(index)]) < 0) {
-                heap[index] = heap[parent(index)];
-                index = parent(index);
-            }         
+            while (index > 1) {
+                if (added.compareTo(heap[parent(index)]) < 0) {
+                    heap[index] = heap[parent(index)];
+                    index = parent(index);                   
+                } else {
+                    break;
+                }
+            }     
         }
         heap[index] = added;
     }
