@@ -16,4 +16,4 @@ Right now stuff seems to be working.
 I'll look into making my algorithms, especially LZSS, more efficient. I'll continue with documentation and add to the testing.
 
 ## Hours spent this week
-About 16.
+Over 20.
