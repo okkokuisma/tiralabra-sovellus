@@ -45,7 +45,19 @@ public class LZSSTest {
     }
 
     @Test
-    public void decodedOutputMatchesOriginalInput() {
+    public void queuesEncodeRight() {
+        ByteList decoded = encoder.decode(encoder.encodeUsingQueues(input));
+        assertEquals(input.length, decoded.size()); // same size
+        
+        for (int i = 0; i < decoded.size(); i++) {
+            if (input[i] != decoded.get(i)) { // fail if the data doesn't match at any point
+                fail();
+            }
+        }
+    }
+    
+    @Test
+    public void bruteForceEncodesRight() {
         ByteList decoded = encoder.decode(encoder.encode(input));
         assertEquals(input.length, decoded.size()); // same size
         

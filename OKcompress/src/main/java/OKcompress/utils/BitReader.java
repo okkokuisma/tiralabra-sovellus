@@ -34,9 +34,9 @@ public class BitReader {
     }
     
     /**
-    * Reads next 8 bits as a byte.
+    * Reads next 8 bits as an unsigned int.
     *
-    * @return Next 8 bits as a byte
+    * @return Next 8 bits as an unsigned int, 256 if there are less than 8 bits remaining.
     */
     public int readByte() {
         if (index == input.length && position != 0) {

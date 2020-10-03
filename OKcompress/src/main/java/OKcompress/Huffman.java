@@ -58,18 +58,17 @@ public class Huffman {
         int treeIndex = 1;
         while (true) {
             int nextBit = reader.readBit();
+            if (nextBit == -1) {
+                break;
+            }
             if (nextBit == 1) { // right child
                 treeIndex = 2 * treeIndex + 1;
             } else { // left child
                 treeIndex = 2 * treeIndex;
             }
-            if (nextBit == -1) {
-                break;
-            }
             if (huffmanTree[treeIndex] > 0) {
                 byte nextByte = (byte) (huffmanTree[treeIndex] - 1);
                 if (nextByte == (byte) 254) {
-                    System.out.println("moi"); // doesn't happen and my tired eyes can't see why
                     break;
                 }
                 output.add((byte) (huffmanTree[treeIndex] - 1));

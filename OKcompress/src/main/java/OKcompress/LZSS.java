@@ -4,6 +4,7 @@ package OKcompress;
 import OKcompress.domain.ByteList;
 import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
+import java.util.ArrayDeque;
 
 /**
  *
@@ -33,28 +34,7 @@ public class LZSS {
             }
             for (int j = dictionaryStartIndex; j <= dictionaryEndIndex; j++) {
                 if (input[i] == input[j]) { // found a match
-                    int length = 1;
-                    int inputIndex = i;
-                    int dictionaryIndex = j;
-                    while (true) { // check how long the match is
-                        if (length > (maxLength - 1)) {
-                            break;
-                        }
-                        
-                        inputIndex++;
-                        dictionaryIndex++;
-                        
-                        if (inputIndex >= input.length) {
-                            break;
-                        }
-                        
-                        if (input[inputIndex] == input[dictionaryIndex]) { // next bytes match as well
-                            length++;
-                        } else {
-                            break;
-                        }
-                    }
-                    
+                    int length = checkMatchLength(input, i, j);
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
                         output.writeLZSSCoded(i - j, length, offsetBits, lengthBits);
                         coded = true;
@@ -95,7 +75,83 @@ public class LZSS {
                 }
             }
         }
-        
         return output;
+    }
+    
+    public ByteList encodeUsingQueues(byte[] input) {
+        ByteWriter output = new ByteWriter();
+        ArrayDeque<Integer>[] matchQueues = new ArrayDeque[256];
+        for (int i = 0; i < 256; i++) {
+            matchQueues[i] = new ArrayDeque();
+        }
+        boolean coded = false;
+        for (int i = 0; i < input.length; i++) {
+            maintainMatchQueues(input, matchQueues, i, 1);
+            Integer[] matchIndexes = new Integer[matchQueues[0xFF & input[i]].size()];
+            matchQueues[0xFF & input[i]].toArray(matchIndexes);
+            for (int j = 0; j < matchIndexes.length; j++) {
+                int matchIndex = matchIndexes[j];
+                int length = checkMatchLength(input, i, matchIndex);
+                if (length >= 3) { // match has to be at least 3 bytes long to encode
+                    output.writeLZSSCoded(i - matchIndex, length, offsetBits, lengthBits);
+                    coded = true;
+                    maintainMatchQueues(input, matchQueues, i+1, length-1);
+                    i += length - 1;
+                    break;
+                }            
+            }
+            
+            if (!coded) { // didn't find a match at least 3 bytes long
+                output.writeLZSSUncoded(input[i]);
+            } else {
+                coded = false;
+            }
+        }
+        output.close();
+        return output.getBytes();
+    }
+    
+    private int checkMatchLength(byte[] input, int inputIndex, int dictionaryIndex) {
+        int length = 1;
+        int maxLength = (int) Math.pow(2, lengthBits) - 1;
+        while (true) { // check how long the match is
+            if (length > (maxLength - 1)) {
+                break;
+            }
+
+            inputIndex++;
+            dictionaryIndex++;
+
+            if (inputIndex >= input.length) {
+                break;
+            }
+
+            if (input[inputIndex] == input[dictionaryIndex]) { // next bytes match as well
+                length++;
+            } else {
+                break;
+            }
+        }
+
+        return length;
+    }
+    
+    private void maintainMatchQueues(byte[] input, ArrayDeque[] matchQueues, int inputIndex, int numberOfShifts) {
+        int maxOffset = (int) Math.pow(2, offsetBits) - 1;
+        
+        if (inputIndex > 0) {
+            for (int i = 0; i < numberOfShifts; i++) {
+                if (inputIndex > maxOffset) {
+                    int dictionaryStartIndex = inputIndex - maxOffset;
+                    if (!matchQueues[0xFF & input[dictionaryStartIndex - 1]].isEmpty()) {
+                        matchQueues[0xFF & input[dictionaryStartIndex - 1]].removeLast();                   
+                    }     
+                }
+
+                int dictionaryEndIndex = inputIndex - 1;
+                matchQueues[0xFF & input[dictionaryEndIndex]].addFirst(dictionaryEndIndex);              
+                inputIndex++;
+            }           
+        }
     }
 }
