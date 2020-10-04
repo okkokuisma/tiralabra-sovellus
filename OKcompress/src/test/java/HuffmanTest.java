@@ -26,7 +26,7 @@ public class HuffmanTest {
     Huffman encoder;
     
     public HuffmanTest() throws FileNotFoundException, IOException {
-        FileInputStream inputStream = new FileInputStream(new File("alice29.txt")); // 12.9 kB text file
+        FileInputStream inputStream = new FileInputStream(new File("alice29.txt")); // 152 kB text file
         input = IOUtils.toByteArray(inputStream);
         encoder = new Huffman();
     }

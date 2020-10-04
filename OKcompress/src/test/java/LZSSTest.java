@@ -25,7 +25,7 @@ public class LZSSTest {
     LZSS encoder;
     
     public LZSSTest() throws FileNotFoundException, IOException {
-        FileInputStream inputStream = new FileInputStream(new File("alice29.txt")); // 12.9 kB text file
+        FileInputStream inputStream = new FileInputStream(new File("alice29.txt")); // 152 kB text file
         input = IOUtils.toByteArray(inputStream);
         encoder = new LZSS(12, 3);
     }
@@ -40,7 +40,7 @@ public class LZSSTest {
     
     @Test
     public void encodedOutputIsSmallerInSize() {
-        IntegerQueue encoded = encoder.encode(input);
+        IntegerQueue encoded = encoder.encodeUsingBruteForce(input);
         assertTrue(encoded.size() < input.length);
     }
 
@@ -59,7 +59,7 @@ public class LZSSTest {
     
     @Test
     public void bruteForceEncodesRight() {
-        IntegerQueue decoded = encoder.decode(encoder.encode(input));
+        IntegerQueue decoded = encoder.decode(encoder.encodeUsingBruteForce(input));
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {

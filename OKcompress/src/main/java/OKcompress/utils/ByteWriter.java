@@ -13,7 +13,7 @@ public class ByteWriter {
 
     public ByteWriter() {
         buffer = 0x00;
-        output = new IntegerQueue();
+        output = new IntegerQueue(10000);
     }
     
     public void writeBit(byte bit) {

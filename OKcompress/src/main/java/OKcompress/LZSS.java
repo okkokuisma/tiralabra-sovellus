@@ -27,10 +27,9 @@ public class LZSS {
     * 
     * @return Encoded data as a IntegerQueue.
     */
-    public IntegerQueue encode(byte[] input) {
+    public IntegerQueue encodeUsingBruteForce(byte[] input) {
         ByteWriter output = new ByteWriter();
         int maxOffset = (int) Math.pow(2, offsetBits) - 1;
-        int maxLength = (int) Math.pow(2, lengthBits) - 1;
         int dictionaryStartIndex = 0;
         int dictionaryEndIndex = -1;
         boolean coded = false;
@@ -62,29 +61,6 @@ public class LZSS {
         return output.getBytes();
     }
     
-    public IntegerQueue decode(IntegerQueue bytes) {
-        IntegerQueue output = new IntegerQueue();    
-        BitReader reader = new BitReader(bytes.getBytes());
-        while (true) {
-            int signBit = reader.readBit();
-            if (signBit == -1) { // end of input
-                break;
-            } else if (signBit == 1) { // coded bytes
-                int offset = reader.readInt(offsetBits);
-                int length = reader.readInt(lengthBits);
-                for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
-                    output.add(output.get(output.size() - offset));
-                }
-            } else { // uncoded byte
-                int nextByte = reader.readByte();
-                if (nextByte < 256) {
-                    output.add(nextByte);
-                }
-            }
-        }
-        return output;
-    }
-    
     /**
     * Encodes given input data using LZSS data compression algorithm. Queues are used to store the indexes of all occurrences of every byte value
     * [0-255] in the sliding window.
@@ -97,7 +73,7 @@ public class LZSS {
         ByteWriter output = new ByteWriter();
         IntegerQueue[] matchQueues = new IntegerQueue[256];
         for (int i = 0; i < 256; i++) {
-            matchQueues[i] = new IntegerQueue();
+            matchQueues[i] = new IntegerQueue(1000);
         }
         boolean coded = false;
         for (int i = 0; i < input.length; i++) {
@@ -123,6 +99,29 @@ public class LZSS {
         }
         output.close();
         return output.getBytes();
+    }
+    
+    public IntegerQueue decode(IntegerQueue bytes) {
+        IntegerQueue output = new IntegerQueue(2 * bytes.size());    
+        BitReader reader = new BitReader(bytes.getBytes());
+        while (true) {
+            int signBit = reader.readBit();
+            if (signBit == -1) { // end of input
+                break;
+            } else if (signBit == 1) { // coded bytes
+                int offset = reader.readInt(offsetBits);
+                int length = reader.readInt(lengthBits);
+                for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
+                    output.add(output.get(output.size() - offset));
+                }
+            } else { // uncoded byte
+                int nextByte = reader.readByte();
+                if (nextByte < 256) {
+                    output.add(nextByte);
+                }
+            }
+        }
+        return output;
     }
     
     /**

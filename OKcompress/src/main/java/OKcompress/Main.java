@@ -26,10 +26,10 @@ public class Main {
 //        FileOutputStream output = new FileOutputStream(file);
 //        System.out.println(bytearray.length);
 //        System.out.println("alku: " + bytearray.length);
-        LZSS encoder = new LZSS(12, 3);
-        IntegerQueue lz = encoder.encodeUsingQueues(bytearray);
+//        LZSS encoder = new LZSS(12, 3);
+//        IntegerQueue lz = encoder.encodeUsingQueues(bytearray);
 //        System.out.println("LZSS: " + lz.size());
-        byte[] decoded = encoder.decode(lz).getBytes();
+//        byte[] decoded = encoder.decode(lz).getBytes();
 ////        String test = "go go gophers";
 //        Huffman huf = new Huffman();
 ////        
@@ -44,13 +44,18 @@ public class Main {
 //            }
 //        }
 //        output.write(juum);
-//        System.out.println("Original file size: " + bytearray.length);
-//        for (int i = 8; i < 17; i++) {
-//            LZSS encoder = new LZSS(i, 3);
-//            ByteList enc = encoder.encode(bytearray);
-//            double rate = (double)enc.size() / bytearray.length * 100;
-//            System.out.println(i + " | " + enc.size() + " | " + rate);
-//        }
-        
+        LZSS encoder = new LZSS(11, 4);
+        long[] times = new long[10];
+        for (int i = 0; i < 10; i++) {
+            long start = System.nanoTime();
+            IntegerQueue enc = encoder.encodeUsingQueues(bytearray);
+            long finish = System.nanoTime();
+            times[i] = finish - start;
+        }
+        long sum = 0;
+        for (int i = 0; i < 10; i++) {
+            sum += times[i];
+        }
+        System.out.println("average (): " + (sum / (double)10) / 1e9);
     }
 }

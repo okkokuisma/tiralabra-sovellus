@@ -47,7 +47,7 @@ public class Huffman {
     }
     
     public IntegerQueue decode(byte[] input) {
-        IntegerQueue output = new IntegerQueue();
+        IntegerQueue output = new IntegerQueue(2 * input.length);
         BitReader reader = new BitReader(input);
         int[] codeLengths = new int[256];
         for (int i = 0; i < 256; i++) {

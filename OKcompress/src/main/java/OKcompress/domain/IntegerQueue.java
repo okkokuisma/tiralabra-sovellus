@@ -12,8 +12,8 @@ public class IntegerQueue {
     private int endIndex;
     private int size;
     
-    public IntegerQueue() {
-        array = new int[1000];
+    public IntegerQueue(int queueSize) {
+        array = new int[queueSize];
         startIndex = 0;
         endIndex = 0;
         size = 0;
