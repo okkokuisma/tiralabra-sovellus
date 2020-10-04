@@ -1,7 +1,7 @@
 package OKcompress;
 
 
-import OKcompress.domain.ByteList;
+import OKcompress.domain.IntegerQueue;
 import OKcompress.utils.BitReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +19,7 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("test.txt"));
+        FileInputStream input = new FileInputStream(new File("alice29.txt"));
         byte[] bytearray = IOUtils.toByteArray(input);
 //        File file = new File("decoded.txt");
 //        file.createNewFile();
@@ -27,9 +27,9 @@ public class Main {
 //        System.out.println(bytearray.length);
 //        System.out.println("alku: " + bytearray.length);
         LZSS encoder = new LZSS(12, 3);
-        ByteList lz = encoder.encodeUsingQueues(bytearray);
+        IntegerQueue lz = encoder.encodeUsingQueues(bytearray);
 //        System.out.println("LZSS: " + lz.size());
-        byte[] decoded = encoder.decode(lz).getArray();
+        byte[] decoded = encoder.decode(lz).getBytes();
 ////        String test = "go go gophers";
 //        Huffman huf = new Huffman();
 ////        
@@ -51,5 +51,6 @@ public class Main {
 //            double rate = (double)enc.size() / bytearray.length * 100;
 //            System.out.println(i + " | " + enc.size() + " | " + rate);
 //        }
+        
     }
 }

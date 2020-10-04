@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import OKcompress.domain.ByteList;
+import OKcompress.domain.IntegerQueue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,9 +35,9 @@ public class ByteWriterTest {
         byte b = (byte) 65;
         writer.writeLZSSUncoded(b);
         writer.close();
-        ByteList bytes = writer.getBytes();
-        assertEquals(32, bytes.get(0).byteValue()); // byte b shifts to right (b >> 1)
-        assertEquals(-128, bytes.get(1).byteValue()); // last 1 bit of byte b leaks to next byte
+        IntegerQueue bytes = writer.getBytes();
+        assertEquals(32, (byte) bytes.get(0)); // byte b shifts to right (b >> 1)
+        assertEquals(-128, (byte) bytes.get(1)); // last 1 bit of byte b leaks to next byte
     }
     
     @Test
@@ -49,9 +49,9 @@ public class ByteWriterTest {
         writer.writeBit((byte) 1);
         writer.close();
         
-        ByteList bytes = writer.getBytes();
-        assertEquals(-128, bytes.get(0).byteValue());
-        assertEquals(-64, bytes.get(1).byteValue());
+        IntegerQueue bytes = writer.getBytes();
+        assertEquals(-128, (byte) bytes.get(0));
+        assertEquals(-64, (byte) bytes.get(1));
     }
     
     @Test

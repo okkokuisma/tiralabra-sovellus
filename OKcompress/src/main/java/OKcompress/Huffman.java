@@ -1,7 +1,7 @@
 
 package OKcompress;
 
-import OKcompress.domain.ByteList;
+import OKcompress.domain.IntegerQueue;
 import OKcompress.domain.HuffmanHeap;
 import OKcompress.domain.HuffmanNode;
 import OKcompress.utils.BitReader;
@@ -12,7 +12,7 @@ import OKcompress.utils.ByteWriter;
  */
 public class Huffman {
     
-    public ByteList encode(byte[] input) {
+    public IntegerQueue encode(byte[] input) {
         ByteWriter writer = new ByteWriter();
         int[] codeLengths = getCodeLengthsUsingHeap(input);
         int[] codes = createCodeArray(codeLengths);
@@ -46,8 +46,8 @@ public class Huffman {
         return writer.getBytes();
     }
     
-    public ByteList decode(byte[] input) {
-        ByteList output = new ByteList();
+    public IntegerQueue decode(byte[] input) {
+        IntegerQueue output = new IntegerQueue();
         BitReader reader = new BitReader(input);
         int[] codeLengths = new int[256];
         for (int i = 0; i < 256; i++) {
@@ -67,11 +67,11 @@ public class Huffman {
                 treeIndex = 2 * treeIndex;
             }
             if (huffmanTree[treeIndex] > 0) {
-                byte nextByte = (byte) (huffmanTree[treeIndex] - 1);
-                if (nextByte == (byte) 254) {
+                int nextByte = (huffmanTree[treeIndex] - 1);
+                if (nextByte == 254) {
                     break;
                 }
-                output.add((byte) (huffmanTree[treeIndex] - 1));
+                output.add((huffmanTree[treeIndex] - 1));
                 treeIndex = 1;
             }
         }

@@ -1,10 +1,9 @@
 
 package OKcompress;
 
-import OKcompress.domain.ByteList;
+import OKcompress.domain.IntegerQueue;
 import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
-import java.util.ArrayDeque;
 
 /**
  *
@@ -20,7 +19,15 @@ public class LZSS {
         this.lengthBits = lengthBits;
     }
     
-    public ByteList encode(byte[] input) {
+    /**
+    * Encodes given input data using LZSS data compression algorithm. Potential matches in the sliding window are searched
+    * using a brute force method of scanning the whole sliding window.
+    *
+    * @param   input    The original, uncompressed data
+    * 
+    * @return Encoded data as a IntegerQueue.
+    */
+    public IntegerQueue encode(byte[] input) {
         ByteWriter output = new ByteWriter();
         int maxOffset = (int) Math.pow(2, offsetBits) - 1;
         int maxLength = (int) Math.pow(2, lengthBits) - 1;
@@ -55,9 +62,9 @@ public class LZSS {
         return output.getBytes();
     }
     
-    public ByteList decode(ByteList bytes) {
-        ByteList output = new ByteList();    
-        BitReader reader = new BitReader(bytes.getArray());
+    public IntegerQueue decode(IntegerQueue bytes) {
+        IntegerQueue output = new IntegerQueue();    
+        BitReader reader = new BitReader(bytes.getBytes());
         while (true) {
             int signBit = reader.readBit();
             if (signBit == -1) { // end of input
@@ -71,24 +78,31 @@ public class LZSS {
             } else { // uncoded byte
                 int nextByte = reader.readByte();
                 if (nextByte < 256) {
-                    output.add((byte) nextByte);
+                    output.add(nextByte);
                 }
             }
         }
         return output;
     }
     
-    public ByteList encodeUsingQueues(byte[] input) {
+    /**
+    * Encodes given input data using LZSS data compression algorithm. Queues are used to store the indexes of all occurrences of every byte value
+    * [0-255] in the sliding window.
+    *
+    * @param   input    The original, uncompressed data
+    * 
+    * @return Encoded data as a IntegerQueue.
+    */
+    public IntegerQueue encodeUsingQueues(byte[] input) {
         ByteWriter output = new ByteWriter();
-        ArrayDeque<Integer>[] matchQueues = new ArrayDeque[256];
+        IntegerQueue[] matchQueues = new IntegerQueue[256];
         for (int i = 0; i < 256; i++) {
-            matchQueues[i] = new ArrayDeque();
+            matchQueues[i] = new IntegerQueue();
         }
         boolean coded = false;
         for (int i = 0; i < input.length; i++) {
             maintainMatchQueues(input, matchQueues, i, 1);
-            Integer[] matchIndexes = new Integer[matchQueues[0xFF & input[i]].size()];
-            matchQueues[0xFF & input[i]].toArray(matchIndexes);
+            int[] matchIndexes = matchQueues[0xFF & input[i]].getArray();
             for (int j = 0; j < matchIndexes.length; j++) {
                 int matchIndex = matchIndexes[j];
                 int length = checkMatchLength(input, i, matchIndex);
@@ -111,6 +125,13 @@ public class LZSS {
         return output.getBytes();
     }
     
+    /**
+    * Checks how long a match is from the initial matching point.
+    *
+    * @param   input    The original, uncompressed data
+    * @param   inputIndex    The index that immediately follows the sliding window
+    * @param   dictionaryIndex    The initial matching point
+    */
     private int checkMatchLength(byte[] input, int inputIndex, int dictionaryIndex) {
         int length = 1;
         int maxLength = (int) Math.pow(2, lengthBits) - 1;
@@ -136,7 +157,16 @@ public class LZSS {
         return length;
     }
     
-    private void maintainMatchQueues(byte[] input, ArrayDeque[] matchQueues, int inputIndex, int numberOfShifts) {
+    /**
+    * Updates the queues containing match indexes when the sliding window is shifted forwards.
+    *
+    * @param   input    The original, uncompressed data
+    * @param   matchQueues    Queues containing all occurrences of every byte value
+    * [0-255] in the sliding window
+    * @param   inputIndex    The index that immediately follows the sliding window
+    * @param   numberOfShifts    The number of steps/indexes the sliding window is to be shifted forwards
+    */
+    private void maintainMatchQueues(byte[] input, IntegerQueue[] matchQueues, int inputIndex, int numberOfShifts) {
         int maxOffset = (int) Math.pow(2, offsetBits) - 1;
         
         if (inputIndex > 0) {

@@ -6,7 +6,7 @@
 
 import OKcompress.Huffman;
 import OKcompress.LZSS;
-import OKcompress.domain.ByteList;
+import OKcompress.domain.IntegerQueue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,13 +41,13 @@ public class HuffmanTest {
     
     @Test
     public void encodedOutputIsSmallerInSize() {
-        ByteList encoded = encoder.encode(input);
+        IntegerQueue encoded = encoder.encode(input);
         assertTrue(encoded.size() < input.length);
     }
     
     @Test
     public void decodedOutputMatchesOriginalInput() {
-        ByteList decoded = encoder.decode(encoder.encode(input).getArray());
+        IntegerQueue decoded = encoder.decode(encoder.encode(input).getBytes());
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {

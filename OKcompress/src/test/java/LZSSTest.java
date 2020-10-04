@@ -5,7 +5,7 @@
  */
 
 import OKcompress.LZSS;
-import OKcompress.domain.ByteList;
+import OKcompress.domain.IntegerQueue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,17 +40,18 @@ public class LZSSTest {
     
     @Test
     public void encodedOutputIsSmallerInSize() {
-        ByteList encoded = encoder.encode(input);
+        IntegerQueue encoded = encoder.encode(input);
         assertTrue(encoded.size() < input.length);
     }
 
     @Test
     public void queuesEncodeRight() {
-        ByteList decoded = encoder.decode(encoder.encodeUsingQueues(input));
+        IntegerQueue decoded = encoder.decode(encoder.encodeUsingQueues(input));
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {
             if (input[i] != decoded.get(i)) { // fail if the data doesn't match at any point
+                System.out.println(i);
                 fail();
             }
         }
@@ -58,7 +59,7 @@ public class LZSSTest {
     
     @Test
     public void bruteForceEncodesRight() {
-        ByteList decoded = encoder.decode(encoder.encode(input));
+        IntegerQueue decoded = encoder.decode(encoder.encode(input));
         assertEquals(input.length, decoded.size()); // same size
         
         for (int i = 0; i < decoded.size(); i++) {
