@@ -30,7 +30,7 @@ public class Main {
 //        IntegerQueue lz = encoder.encodeUsingQueues(bytearray);
 //        System.out.println("LZSS: " + lz.size());
 //        byte[] decoded = encoder.decode(lz).getBytes();
-////        String test = "go go gophers";
+        String test = "go go gophers";
 //        Huffman huf = new Huffman();
 ////        
 //        byte[] dec = huf.encode(bytearray).getArray();
@@ -44,18 +44,33 @@ public class Main {
 //            }
 //        }
 //        output.write(juum);
-        LZSS encoder = new LZSS(11, 4);
-        long[] times = new long[10];
-        for (int i = 0; i < 10; i++) {
-            long start = System.nanoTime();
-            IntegerQueue enc = encoder.encodeUsingQueues(bytearray);
-            long finish = System.nanoTime();
-            times[i] = finish - start;
+        LZSS encoder = new LZSS(12, 4);
+//        long[] times = new long[10];
+//        for (int i = 0; i < 10; i++) {
+//            long start = System.nanoTime();
+//            IntegerQueue enc = encoder.encodeUsingQueues(bytearray);
+//            long finish = System.nanoTime();
+//            times[i] = finish - start;
+//        }
+//        long sum = 0;
+//        for (int i = 0; i < 10; i++) {
+//            sum += times[i];
+//        }
+//        System.out.println("average (): " + (sum / (double)10) / 1e9);
+        System.out.println(bytearray.length);
+        DeflateLite def = new DeflateLite();
+        byte[] output = def.encode(bytearray);
+        System.out.println(output.length);
+        byte[] dec = def.decode(output);
+        System.out.println(dec.length);
+        byte[] lzssenc = encoder.encodeUsingQueues(bytearray).getBytes();
+        for (int i = 0; i < lzssenc.length; i++) {
+            if (dec[i] != lzssenc[i]) {
+                System.out.println("indeksi: " + i);
+                System.out.println("def: " + dec[i]);
+                System.out.println("og: " + (0xFF & lzssenc[i]));
+                break;
+            }
         }
-        long sum = 0;
-        for (int i = 0; i < 10; i++) {
-            sum += times[i];
-        }
-        System.out.println("average (): " + (sum / (double)10) / 1e9);
     }
 }

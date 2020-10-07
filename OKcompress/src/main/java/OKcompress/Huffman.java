@@ -11,6 +11,14 @@ import OKcompress.utils.ByteWriter;
  * Data compression and decompression using Huffman coding.
  */
 public class Huffman {
+    static int[] deflateLengthCodes = { 
+        4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+    };
+    
+    static int[] deflateOffsetCodes = { 
+        2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 
+        257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097
+    };
     
     public IntegerQueue encode(byte[] input) {
         ByteWriter writer = new ByteWriter();
@@ -43,6 +51,7 @@ public class Huffman {
             }
             code = code << 1;               
         }
+        writer.close();
         return writer.getBytes();
     }
     
@@ -155,7 +164,7 @@ public class Huffman {
         // create a node of each individual byte in the input array where the number of occurances is the weight of the created node
         for (int i = 0; i < occurrences.length; i++) { 
             if (occurrences[i] != 0) {
-                HuffmanNode node = new HuffmanNode((byte) i, occurrences[i]);
+                HuffmanNode node = new HuffmanNode(i, occurrences[i]);
                 huffmanTree.add(node);
             }
         }
@@ -186,7 +195,7 @@ public class Huffman {
             return;
         }
         if (node.leftChild == null) {
-            codeLengths[0xFF & node.byteValue] = length;
+            codeLengths[node.byteValue] = length;
         } else {
             length++;
             createCodeLengthArray(node.leftChild, codeLengths, length);
@@ -203,16 +212,16 @@ public class Huffman {
     * @return The Huffman codes for each byte value [0-255] as integers. The actual bits of the code
     * are determined based on the code lengths.
     */
-    private int[] createCodeArray(int[] codeLengths) {
-        int[] bitLengths = new int[20];
+    public int[] createCodeArray(int[] codeLengths) {
+        int[] bitLengths = new int[31];
         for (int i = 0; i < codeLengths.length; i++) {
             if (codeLengths[i] > 0) {
                 bitLengths[codeLengths[i]]++; // how many instances of each code length [i] there are
             }
         }
         int[] minimumValues = createMinimumNumericalCodeValueArray(bitLengths);
-        int[] codes = new int[256];
-        for (int i = 0; i < 256; i++) {
+        int[] codes = new int[codeLengths.length];
+        for (int i = 0; i < codeLengths.length; i++) {
             if (codeLengths[i] > 0) {
                 // code is created by incrementing the base value of each code length for each instance of that particular code length
                 // that way the symbol order remains lexicographical between symbols with the same code length
@@ -266,7 +275,7 @@ public class Huffman {
     *
     * @return Huffman tree as an array with byte values as nodes
     */
-    private int[] recreateHuffmanTree(int[] codes, int[] codeLengths) {
+    public int[] recreateHuffmanTree(int[] codes, int[] codeLengths) {
 //        int[] huffmanTree = new int[65535];
         int[] huffmanTree = new int[1000000];
         for (int i = 0; i < codes.length; i++) {
@@ -290,7 +299,7 @@ public class Huffman {
         return huffmanTree;
     }
     
-    private void createFileHeader(int[] codeLengths, ByteWriter writer) {
+    public void createFileHeader(int[] codeLengths, ByteWriter writer) {
         for (int i = 0; i < codeLengths.length; i++) { // store the code length of each symbol for decoding
             int codeLength = codeLengths[i];
             for (int j = 0; j < 5; j++) { 
@@ -303,5 +312,66 @@ public class Huffman {
                 codeLength = codeLength << 1;
             }
         }
+    }
+    
+    private int[] createDeflateCompatibleOccurrenceArray(byte[] input) {
+        int[] occurrences = new int[270];
+        BitReader reader = new BitReader(input);
+        while (true) {
+            int nextBit = reader.readBit();
+            if (nextBit == -1) {
+                break;
+            }
+            if (nextBit == 1) { 
+                int offset = reader.readInt(12);
+                int length = reader.readInt(4);
+                for (int i = 0; i < deflateLengthCodes.length; i++) {
+                    if (length < deflateLengthCodes[i]) {
+                        occurrences[257 + i]++;
+                        break;
+                    }
+                }
+                for (int i = 0; i < deflateOffsetCodes.length; i++) {
+                    if (offset < deflateOffsetCodes[i]) {
+                        occurrences[i]++;
+                        break;
+                    }
+                }
+            } else { // left child
+                int nextByte = reader.readByte();
+                if (nextByte > 255) {
+                    break;
+                }
+                occurrences[nextByte]++;
+            }
+        }
+        int index = 254; // add an ending byte for decoding
+        occurrences[index]++;
+        return occurrences;
+    }
+    
+    public int[] getDeflateCodeLengths(byte[] input) {
+        HuffmanHeap huffmanTree = new HuffmanHeap();
+        
+        int[] occurrences = createDeflateCompatibleOccurrenceArray(input);
+        
+        // create a node of each individual byte in the input array where the number of occurances is the weight of the created node
+        for (int i = 0; i < occurrences.length; i++) { 
+            if (occurrences[i] != 0) {
+                HuffmanNode node = new HuffmanNode(i, occurrences[i]);
+                huffmanTree.add(node);
+            }
+        }
+        while (huffmanTree.getLast() != 1) { // create a tree which determines the code length for each byte value
+            HuffmanNode node = new HuffmanNode();
+            node.leftChild = huffmanTree.poll();
+            node.rightChild = huffmanTree.poll();
+            node.weight = node.leftChild.weight + node.rightChild.weight;
+            huffmanTree.add(node);
+        }  
+        
+        int[] codeLengths = new int[occurrences.length];
+        createCodeLengthArray(huffmanTree.poll(), codeLengths, 0); 
+        return codeLengths;
     }
 }
