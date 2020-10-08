@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package OKcompress;
 
 import OKcompress.domain.IntegerQueue;
@@ -26,6 +22,11 @@ public class DeflateLite {
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097
     };
     
+    static int[] deflateOffsetMins = { 
+        1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 
+        129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073
+    };
+    
     static int[] deflateOffsetExtraBits = { 
         0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 
         6, 7, 7, 8, 8, 9, 9, 10, 10
@@ -42,13 +43,9 @@ public class DeflateLite {
         
         int[] codeLengths = huf.getDeflateCodeLengths(lzssEncoded);
         int[] codes = huf.createCodeArray(codeLengths);
-//        for (int i = 0; i < codeLengths.length; i++) {
-//            if (codeLengths[i] > 0) {
-//                System.out.println("i: " + i + ", code: " + codes[i] + ", code length: " + codeLengths[i]);
-//            }
-//        }
         huf.createFileHeader(codeLengths, writer);
         BitReader reader = new BitReader(lzssEncoded);
+        int written = 0;
         while (true) {
             int code = 0;
             int codeLength = 0;
@@ -64,6 +61,7 @@ public class DeflateLite {
                         code = codes[257 + i];
                         codeLength = codeLengths[257 + i];
                         writeCode(writer, code, codeLength);
+                        written++;
                         break;
                     }
                 }
@@ -76,6 +74,7 @@ public class DeflateLite {
                             int extraBits = offset - deflateOffsetCodes[i-1];
                             writeCode(writer, extraBits, deflateOffsetExtraBits[i]);
                         }
+                        written++;
                         break;
                     }
                 }
@@ -87,6 +86,7 @@ public class DeflateLite {
                 code = codes[nextByte];
                 codeLength = codeLengths[nextByte];
                 writeCode(writer, code, codeLength);
+                written++;
             }
         }
 
@@ -97,7 +97,6 @@ public class DeflateLite {
     public byte[] decode(byte[] input) {
         IntegerQueue output = new IntegerQueue(3 * input.length);
         BitReader reader = new BitReader(input);
-        ByteWriter writer = new ByteWriter();
         int[] codeLengths = new int[270];
         for (int i = 0; i < 270; i++) {
             codeLengths[i] = reader.readInt(5); // read code lengths from file header
@@ -107,24 +106,27 @@ public class DeflateLite {
         int treeIndex = 1;
         boolean offsetCode = false;
         int length = 0;
-        int written = 0;
         while (true) {
             int nextBit = reader.readBit();
             if (nextBit == -1) {
                 break;
             }
-            if (nextBit == 1) { // right child
+            if (nextBit == 1) {
                 treeIndex = 2 * treeIndex + 1;
-            } else { // left child
+            } else {
                 treeIndex = 2 * treeIndex;
             }
             if (huffmanTree[treeIndex] > 0) {
+                if (!offsetCode & (reader.index == input.length)) {
+                    System.out.println("moi");
+                }
                 int nextByte = huffmanTree[treeIndex] - 1;
                 if (offsetCode) {
                     try {    
-                        int offset = (deflateOffsetCodes[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte])) - 1;
-                        writer.writeLZSSCoded(offset, length, 12, 4);
-                        written++;
+                        int offset = (deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]));
+                        for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
+                            output.add(output.get(output.size() - offset));
+                        }
                     } catch (ArrayIndexOutOfBoundsException x) {
                         System.out.println(x.getMessage());
                         break;
@@ -135,14 +137,13 @@ public class DeflateLite {
                         length = deflateLengthCodes[nextByte - 257] - 1;
                         offsetCode = true;
                     } else {
-                        writer.writeLZSSUncoded((byte) nextByte);
-                        written++;
+                        output.add(nextByte);
                     }     
                 }
                 treeIndex = 1;
             }
         }
-        return writer.getBytes().getBytes();
+        return output.getBytes();
     }
     
     private void writeCode(ByteWriter writer, int code, int codeLength) {

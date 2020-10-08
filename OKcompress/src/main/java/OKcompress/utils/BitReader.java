@@ -6,7 +6,7 @@ package OKcompress.utils;
  */
 public class BitReader {
     private byte[] input;
-    private int index;
+    public int index;
     private int bits;
     private int position;
     
