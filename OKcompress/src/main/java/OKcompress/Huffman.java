@@ -88,67 +88,6 @@ public class Huffman {
     }
     
     /**
-//    * Calculates the code length for each byte value that occurs in the given input.
-//    *
-//    * @param   input    The original, uncompressed data
-//    *
-//    * @return The code length of each byte value [0-255] (0 for byte values not found in input)
-//    */
-//    private int[] getCodeLengths(byte[] input) {
-//        int[] occurrences = createByteOccurrenceArray(input);
-//        
-//        int[] nodes = new int[256];
-//        int[] nodeCounts = new int[256];
-//        int nodeCounter = 0;
-//        
-//        for (int i = 0; i < occurrences.length; i++) { 
-//            if (occurrences[i] != 0) {
-//                nodes[nodeCounter] = i + 1; // add a node pointer for each symbol that occured in the input
-//                nodeCounts[nodeCounter] = occurrences[i]; // weigth for each node for sorting the nodes
-//                nodeCounter++;
-//            }
-//        }
-//        
-//        int[] codeLengths = new int[256];
-//        int[] pointerArray = new int[256]; // array for pointers to other nodes in the same tree
-//        
-//        while (nodeCounter > 1) {
-//            // sorting nodes by occurances (nodes with most occurances to the start)
-//            for (int i = 0; i < nodeCounter; i++) {
-//                if (nodeCounts[i] < nodeCounts[i + 1]) {
-//                    int swap = nodes[i];
-//                    nodes[i] = nodes[i + 1];
-//                    nodes[i + 1] = swap;
-//                    swap = nodeCounts[i];
-//                    nodeCounts[i] = nodeCounts[i + 1];
-//                    nodeCounts[i + 1] = swap;
-//                    if (i > 0) {
-//                        i = i - 2;
-//                    }
-//                }
-//            }
-//            
-//            // increment bit lengths of all nodes in the same tree (created when combining the last two nodes)
-//            int leftNode = nodes[nodeCounter - 2];
-//            int rightNode = nodes[nodeCounter - 1]; // the next pointer to be added
-//            while (leftNode > 0) {
-//                codeLengths[leftNode - 1]++;
-//                int pointerNode = pointerArray[leftNode - 1];
-//                if (pointerNode == 0 && rightNode > 0) {
-//                    pointerArray[leftNode - 1] = rightNode;
-//                    pointerNode = rightNode;
-//                    rightNode = 0;
-//                }
-//                leftNode = pointerNode;
-//            }
-//            
-//            nodeCounts[nodeCounter - 2] += nodeCounts[nodeCounter - 1]; // combine last two nodes
-//            nodeCounter--;
-//        }
-//        return codeLengths;
-//    }
-    
-    /**
     * Creates a Huffman tree using a HuffmanHeap to calculate the code length for each 
     * byte value that occurs in the given input.
     *
