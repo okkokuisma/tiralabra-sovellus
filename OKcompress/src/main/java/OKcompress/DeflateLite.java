@@ -39,16 +39,12 @@ public class DeflateLite {
     
     public byte[] encode(byte[] input) {
         ByteWriter writer = new ByteWriter();
-        byte[] lzssEncoded = lzss.encodeUsingQueues(input).getBytes();
-        
+        byte[] lzssEncoded = lzss.encodeUsingQueues(input).getBytes();        
         int[] codeLengths = huf.getDeflateCodeLengths(lzssEncoded);
         int[] codes = huf.createCodeArray(codeLengths);
         huf.createFileHeader(codeLengths, writer);
         BitReader reader = new BitReader(lzssEncoded);
-        int written = 0;
         while (true) {
-            int code = 0;
-            int codeLength = 0;
             int nextBit = reader.readBit();
             if (nextBit == -1) {
                 break;
@@ -58,38 +54,29 @@ public class DeflateLite {
                 int length = reader.readInt(4);
                 for (int i = 0; i < deflateLengthCodes.length; i++) {
                     if (length < deflateLengthCodes[i]) {
-                        code = codes[257 + i];
-                        codeLength = codeLengths[257 + i];
-                        writeCode(writer, code, codeLength);
-                        written++;
+                        writeCode(writer, codes[257 + i], codeLengths[257 + i]);
                         break;
                     }
                 }
                 for (int i = 0; i < deflateOffsetCodes.length; i++) {
                     if (offset < deflateOffsetCodes[i]) {
-                        code = codes[i];
-                        codeLength = codeLengths[i];
-                        writeCode(writer, code, codeLength);
+                        writeCode(writer, codes[i], codeLengths[i]);
                         if (offset > 4) {
                             int extraBits = offset - deflateOffsetCodes[i-1];
                             writeCode(writer, extraBits, deflateOffsetExtraBits[i]);
                         }
-                        written++;
                         break;
                     }
                 }
-            } else { // left child
+            } else {
                 int nextByte = reader.readByte();
                 if (nextByte > 255) {
                     break;
                 }
-                code = codes[nextByte];
-                codeLength = codeLengths[nextByte];
-                writeCode(writer, code, codeLength);
-                written++;
+                writeCode(writer, codes[nextByte], codeLengths[nextByte]);
             }
         }
-
+        writeCode(writer, codes[256], codeLengths[256]);
         writer.close();
         return writer.getBytes().getBytes();
     }
@@ -117,19 +104,15 @@ public class DeflateLite {
                 treeIndex = 2 * treeIndex;
             }
             if (huffmanTree[treeIndex] > 0) {
-                if (!offsetCode & (reader.index == input.length)) {
-                    System.out.println("moi");
-                }
                 int nextByte = huffmanTree[treeIndex] - 1;
+                if (nextByte == 256) {
+                    break;
+                    
+                }
                 if (offsetCode) {
-                    try {    
-                        int offset = (deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]));
-                        for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
-                            output.add(output.get(output.size() - offset));
-                        }
-                    } catch (ArrayIndexOutOfBoundsException x) {
-                        System.out.println(x.getMessage());
-                        break;
+                    int offset = (deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]));
+                    for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
+                        output.add(output.get(output.size() - offset));
                     }
                     offsetCode = false;
                 } else {

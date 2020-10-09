@@ -345,8 +345,7 @@ public class Huffman {
                 occurrences[nextByte]++;
             }
         }
-        int index = 254; // add an ending byte for decoding
-        occurrences[index]++;
+        occurrences[256]++;
         return occurrences;
     }
     
