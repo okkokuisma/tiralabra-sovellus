@@ -1,5 +1,5 @@
 
-package OKcompress;
+package OKcompress.logic;
 
 import OKcompress.domain.IntegerQueue;
 import OKcompress.domain.HuffmanHeap;

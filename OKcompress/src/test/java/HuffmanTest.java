@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-import OKcompress.Huffman;
-import OKcompress.LZSS;
+import OKcompress.logic.Huffman;
+import OKcompress.logic.LZSS;
 import OKcompress.domain.IntegerQueue;
 import java.io.File;
 import java.io.FileInputStream;

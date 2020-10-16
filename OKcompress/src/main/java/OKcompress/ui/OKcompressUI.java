@@ -19,10 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/**
- *
- * @author ogkuisma
- */
+
 public class OKcompressUI extends Application {
     Service service;
     String filePath;
@@ -87,7 +84,6 @@ public class OKcompressUI extends Application {
         toggles.setAlignment(Pos.CENTER);
         
         dragTarget.setOnDragOver(new EventHandler<DragEvent>() {
-
             @Override
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != dragTarget && event.getDragboard().hasFiles()) {
@@ -98,7 +94,6 @@ public class OKcompressUI extends Application {
         });
 
         dragTarget.setOnDragDropped(new EventHandler<DragEvent>() {
-
             @Override
             public void handle(DragEvent event) {
                 Dragboard db = event.getDragboard();

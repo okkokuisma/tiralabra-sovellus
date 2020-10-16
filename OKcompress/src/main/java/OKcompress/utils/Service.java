@@ -5,9 +5,9 @@
  */
 package OKcompress.utils;
 
-import OKcompress.DeflateLite;
-import OKcompress.Huffman;
-import OKcompress.LZSS;
+import OKcompress.logic.DeflateLite;
+import OKcompress.logic.Huffman;
+import OKcompress.logic.LZSS;
 import OKcompress.io.FileManager;
 import java.io.IOException;
 import java.util.logging.Level;

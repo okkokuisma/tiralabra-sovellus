@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import OKcompress.DeflateLite;
+import OKcompress.logic.DeflateLite;
 import OKcompress.domain.IntegerQueue;
 import java.io.File;
 import java.io.FileInputStream;
