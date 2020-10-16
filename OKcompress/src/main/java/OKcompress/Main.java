@@ -1,78 +1,12 @@
 package OKcompress;
 
 
-import OKcompress.domain.IntegerQueue;
 import OKcompress.ui.OKcompressUI;
-import OKcompress.utils.BitReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayDeque;
 import javafx.application.Application;
-import org.apache.commons.io.IOUtils;
 
 
-/**
- *
- * @author ogkuisma
- */
-public class Main {
-    
-    public static void main(String[] args) throws FileNotFoundException, IOException {
-//        System.out.println(bytearray.length);
-//        System.out.println("alku: " + bytearray.length);
-//        LZSS encoder = new LZSS(12, 3);
-//        IntegerQueue lz = encoder.encodeUsingQueues(bytearray);
-//        System.out.println("LZSS: " + lz.size());
-//        byte[] decoded = encoder.decode(lz).getBytes();
-        String test = "go go gophers";
-//        Huffman huf = new Huffman();
-////        
-//        byte[] dec = huf.encode(bytearray).getArray();
-//        System.out.println("huffman: " + dec.length);
-//        byte[] juum = huf.decode(dec).getArray();
-
-//        for (int i = 0; i < bytearray.length; i++) {
-//            if (bytearray[i] != decoded[i]) {
-//                System.out.println("buu" + i);
-//                break;
-//            }
-//        }
-//        output.write(juum);
-//        for (int j = 8; j < 17; j++) {
-//            LZSS encoder = new LZSS(j, 4);
-//            long[] times = new long[10];
-//            for (int i = 0; i < 10; i++) {
-//                long start = System.nanoTime();
-//                IntegerQueue enc = encoder.encodeUsingBruteForce(bytearray);
-//                long finish = System.nanoTime();
-//                times[i] = finish - start;
-//            }
-//            long sum = 0;
-//            for (int i = 0; i < 10; i++) {
-//                sum += times[i];
-//            }
-//            System.out.println("average (" + j + "): " + (sum / (double)10) / 1e9);
-//        }
-
-//        DeflateLite def = new DeflateLite();
-//        byte[] output = def.encode(test.getBytes());
-//        System.out.println("def: " + output.length);
-//        byte[] dec = def.decode(output);
-////        System.out.println(dec.length);
-//        byte[] lzssenc = encoder.encodeUsingQueues(bytearray).getBytes();
-//        System.out.println("lzss: " + lzssenc.length);
-//        byte[] hufenc = huf.encode(bytearray).getBytes();
-//        System.out.println("huf: " + hufenc.length);
-//        for (int i = 0; i < dec.length; i++) {
-//            if (dec[i] != bytearray[i]) {
-//                System.out.println("bbuu " + i);
-//                break;
-//            }
-//        }
+public class Main {  
+    public static void main(String[] args) { 
         Application.launch(OKcompressUI.class);
-
     }
 }

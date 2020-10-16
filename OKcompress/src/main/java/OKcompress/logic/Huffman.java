@@ -41,8 +41,8 @@ public class Huffman {
                 code = code << 1;               
             }
         }
-        int code = codes[254];
-        int codeLength = codeLengths[254];
+        int code = codes[256];
+        int codeLength = codeLengths[256];
         int highestBit = (int) Math.pow(2, (codeLength-1));
         for (int j = 0; j < codeLength; j++) { 
             int a = code & highestBit;
@@ -61,8 +61,8 @@ public class Huffman {
         IntegerQueue output = new IntegerQueue(2 * input.length);
         BitReader reader = new BitReader(input);
         reader.readInt(2);
-        int[] codeLengths = new int[256];
-        for (int i = 0; i < 256; i++) {
+        int[] codeLengths = new int[257];
+        for (int i = 0; i < 257; i++) {
             codeLengths[i] = reader.readInt(5); // read code lengths from file header
         }
         int[] codes = createCodeArray(codeLengths);
@@ -79,8 +79,8 @@ public class Huffman {
                 treeIndex = 2 * treeIndex;
             }
             if (huffmanTree[treeIndex] > 0) {
-                int nextByte = (huffmanTree[treeIndex] - 1);
-                if (nextByte == 254) {
+                int nextByte = huffmanTree[treeIndex] - 1;
+                if (nextByte == 256) {
                     break;
                 }
                 output.add((huffmanTree[treeIndex] - 1));
@@ -118,7 +118,7 @@ public class Huffman {
             huffmanTree.add(node);
         }  
         
-        int[] codeLengths = new int[256];
+        int[] codeLengths = new int[257];
         createCodeLengthArray(huffmanTree.poll(), codeLengths, 0); 
         return codeLengths;
     }
@@ -181,13 +181,13 @@ public class Huffman {
     * @return Array of number of occurrences of each byte value [0-255] in the input data.
     */
     private int[] createByteOccurrenceArray(byte[] input) {
-        int[] occurrences = new int[256];
+        int[] occurrences = new int[257];
         for (int i = 0; i < input.length; i++) { // check how many occurances of each individual byte there are in the input array
             int index = 0xFF & input[i]; // get the positive index for byte
             occurrences[index]++;
         }
-        int index = 0xFF & (byte) 254; // add an ending byte for decoding
-        occurrences[index]++;
+ 
+        occurrences[256]++; // add an ending byte for decoding
         return occurrences;
     }
     
@@ -218,7 +218,6 @@ public class Huffman {
     * @return Huffman tree as an array with byte values as nodes
     */
     public int[] recreateHuffmanTree(int[] codes, int[] codeLengths) {
-//        int[] huffmanTree = new int[65535];
         int[] huffmanTree = new int[1000000];
         for (int i = 0; i < codes.length; i++) {
             if (codes[i] >= 0) {

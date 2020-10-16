@@ -9,7 +9,7 @@ public class HuffmanHeap {
     int last;
     
     public HuffmanHeap() {
-        heap = new HuffmanNode[256];
+        heap = new HuffmanNode[300];
         last = 0;
     }
     
