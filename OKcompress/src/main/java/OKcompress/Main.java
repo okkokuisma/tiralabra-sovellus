@@ -2,6 +2,7 @@ package OKcompress;
 
 
 import OKcompress.domain.IntegerQueue;
+import OKcompress.ui.OKcompressUI;
 import OKcompress.utils.BitReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import javafx.application.Application;
 import org.apache.commons.io.IOUtils;
 
 
@@ -19,18 +21,13 @@ import org.apache.commons.io.IOUtils;
 public class Main {
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        FileInputStream input = new FileInputStream(new File("alice29.txt"));
-        byte[] bytearray = IOUtils.toByteArray(input);
-//        File file = new File("decoded.txt");
-//        file.createNewFile();
-//        FileOutputStream output = new FileOutputStream(file);
 //        System.out.println(bytearray.length);
 //        System.out.println("alku: " + bytearray.length);
 //        LZSS encoder = new LZSS(12, 3);
 //        IntegerQueue lz = encoder.encodeUsingQueues(bytearray);
 //        System.out.println("LZSS: " + lz.size());
 //        byte[] decoded = encoder.decode(lz).getBytes();
-//        String test = "go go gophers";
+        String test = "go go gophers";
 //        Huffman huf = new Huffman();
 ////        
 //        byte[] dec = huf.encode(bytearray).getArray();
@@ -44,26 +41,26 @@ public class Main {
 //            }
 //        }
 //        output.write(juum);
-        for (int j = 8; j < 17; j++) {
-            LZSS encoder = new LZSS(j, 4);
-            long[] times = new long[10];
-            for (int i = 0; i < 10; i++) {
-                long start = System.nanoTime();
-                IntegerQueue enc = encoder.encodeUsingBruteForce(bytearray);
-                long finish = System.nanoTime();
-                times[i] = finish - start;
-            }
-            long sum = 0;
-            for (int i = 0; i < 10; i++) {
-                sum += times[i];
-            }
-            System.out.println("average (" + j + "): " + (sum / (double)10) / 1e9);
-        }
-//        System.out.println(bytearray.length);
+//        for (int j = 8; j < 17; j++) {
+//            LZSS encoder = new LZSS(j, 4);
+//            long[] times = new long[10];
+//            for (int i = 0; i < 10; i++) {
+//                long start = System.nanoTime();
+//                IntegerQueue enc = encoder.encodeUsingBruteForce(bytearray);
+//                long finish = System.nanoTime();
+//                times[i] = finish - start;
+//            }
+//            long sum = 0;
+//            for (int i = 0; i < 10; i++) {
+//                sum += times[i];
+//            }
+//            System.out.println("average (" + j + "): " + (sum / (double)10) / 1e9);
+//        }
+
 //        DeflateLite def = new DeflateLite();
-//        byte[] output = def.encode(bytearray);
+//        byte[] output = def.encode(test.getBytes());
 //        System.out.println("def: " + output.length);
-////        byte[] dec = def.decode(output);
+//        byte[] dec = def.decode(output);
 ////        System.out.println(dec.length);
 //        byte[] lzssenc = encoder.encodeUsingQueues(bytearray).getBytes();
 //        System.out.println("lzss: " + lzssenc.length);
@@ -75,5 +72,7 @@ public class Main {
 //                break;
 //            }
 //        }
+        Application.launch(OKcompressUI.class);
+
     }
 }

@@ -27,8 +27,10 @@ public class LZSS {
     * 
     * @return Encoded data as a IntegerQueue.
     */
-    public IntegerQueue encodeUsingBruteForce(byte[] input) {
-        ByteWriter output = new ByteWriter();
+    public byte[] encodeUsingBruteForce(byte[] input) {
+        ByteWriter writer = new ByteWriter();
+        writer.writeBit((byte) 1);
+        writer.writeBit((byte) 1);
         int maxOffset = (int) Math.pow(2, offsetBits) - 1;
         int dictionaryStartIndex = 0;
         int dictionaryEndIndex = -1;
@@ -42,23 +44,21 @@ public class LZSS {
                 if (input[i] == input[j]) { // found a match
                     int length = checkMatchLength(input, i, j);
                     if (length >= 3) { // match has to be at least 3 bytes long to encode
-                        output.writeLZSSCoded(i - j, length, offsetBits, lengthBits);
+                        writer.writeLZSSCoded(i - j, length, offsetBits, lengthBits);
                         coded = true;
                         i += length - 1;
                         break;
                     }
                 }               
-            }
-            
+            }            
             if (!coded) { // didn't find a match at least 3 bytes long
-                output.writeLZSSUncoded(input[i]);
+                writer.writeLZSSUncoded(input[i]);
             } else {
                 coded = false;
             }
-        }
-        
-        output.close();
-        return output.getBytes();
+        }       
+        writer.close();
+        return writer.getBytes();
     }
     
     /**
@@ -69,8 +69,10 @@ public class LZSS {
     * 
     * @return Encoded data as a IntegerQueue.
     */
-    public IntegerQueue encodeUsingQueues(byte[] input) {
-        ByteWriter output = new ByteWriter();
+    public byte[] encodeUsingQueues(byte[] input) {
+        ByteWriter writer = new ByteWriter();
+        writer.writeBit((byte) 1);
+        writer.writeBit((byte) 1);
         IntegerQueue[] matchQueues = new IntegerQueue[256];
         for (int i = 0; i < 256; i++) {
             matchQueues[i] = new IntegerQueue(1000);
@@ -83,7 +85,7 @@ public class LZSS {
                 int matchIndex = matchIndexes[j];
                 int length = checkMatchLength(input, i, matchIndex);
                 if (length >= 3) { // match has to be at least 3 bytes long to encode
-                    output.writeLZSSCoded(i - matchIndex, length, offsetBits, lengthBits);
+                    writer.writeLZSSCoded(i - matchIndex, length, offsetBits, lengthBits);
                     coded = true;
                     maintainMatchQueues(input, matchQueues, i+1, length-1);
                     i += length - 1;
@@ -92,18 +94,19 @@ public class LZSS {
             }
             
             if (!coded) { // didn't find a match at least 3 bytes long
-                output.writeLZSSUncoded(input[i]);
+                writer.writeLZSSUncoded(input[i]);
             } else {
                 coded = false;
             }
         }
-        output.close();
-        return output.getBytes();
+        writer.close();
+        return writer.getBytes();
     }
     
-    public IntegerQueue decode(IntegerQueue bytes) {
-        IntegerQueue output = new IntegerQueue(2 * bytes.size());    
-        BitReader reader = new BitReader(bytes.getBytes());
+    public byte[] decode(byte[] bytes) {
+        IntegerQueue output = new IntegerQueue(2 * bytes.length);    
+        BitReader reader = new BitReader(bytes);
+        reader.readInt(2);
         while (true) {
             int signBit = reader.readBit();
             if (signBit == -1) { // end of input
@@ -121,7 +124,7 @@ public class LZSS {
                 }
             }
         }
-        return output;
+        return output.getBytes();
     }
     
     /**
@@ -138,21 +141,17 @@ public class LZSS {
             if (length > (maxLength - 1)) {
                 break;
             }
-
             inputIndex++;
             dictionaryIndex++;
-
             if (inputIndex >= input.length) {
                 break;
             }
-
             if (input[inputIndex] == input[dictionaryIndex]) { // next bytes match as well
                 length++;
             } else {
                 break;
             }
         }
-
         return length;
     }
     

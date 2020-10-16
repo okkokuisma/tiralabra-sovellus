@@ -118,7 +118,11 @@ public class ByteWriter {
         position = 0;
     }
     
-    public IntegerQueue getBytes() {
+    public IntegerQueue getOutput() {
         return output;
+    }
+    
+    public byte[] getBytes() {
+        return output.getBytes();
     }
 }

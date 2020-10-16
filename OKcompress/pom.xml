@@ -29,6 +29,11 @@
             <version>3.2.0</version>
             <type>maven-plugin</type>
         </dependency>
+          <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>14</version>
+          </dependency>
     </dependencies>
 
     <build>

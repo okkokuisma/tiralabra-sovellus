@@ -40,18 +40,17 @@ public class LZSSTest {
     
     @Test
     public void encodedOutputIsSmallerInSize() {
-        IntegerQueue encoded = encoder.encodeUsingBruteForce(input);
-        assertTrue(encoded.size() < input.length);
+        byte[] encoded = encoder.encodeUsingBruteForce(input);
+        assertTrue(encoded.length < input.length);
     }
 
     @Test
     public void queuesEncodeRight() {
-        IntegerQueue decoded = encoder.decode(encoder.encodeUsingQueues(input));
-        assertEquals(input.length, decoded.size()); // same size
+        byte[] decoded = encoder.decode(encoder.encodeUsingQueues(input));
+        assertEquals(input.length, decoded.length); // same size
         
-        for (int i = 0; i < decoded.size(); i++) {
-            if (input[i] != decoded.get(i)) { // fail if the data doesn't match at any point
-                System.out.println(i);
+        for (int i = 0; i < decoded.length; i++) {
+            if (input[i] != decoded[i]) { // fail if the data doesn't match at any point
                 fail();
             }
         }
@@ -59,11 +58,11 @@ public class LZSSTest {
     
     @Test
     public void bruteForceEncodesRight() {
-        IntegerQueue decoded = encoder.decode(encoder.encodeUsingBruteForce(input));
-        assertEquals(input.length, decoded.size()); // same size
+        byte[] decoded = encoder.decode(encoder.encodeUsingBruteForce(input));
+        assertEquals(input.length, decoded.length); // same size
         
-        for (int i = 0; i < decoded.size(); i++) {
-            if (input[i] != decoded.get(i)) { // fail if the data doesn't match at any point
+        for (int i = 0; i < decoded.length; i++) {
+            if (input[i] != decoded[i]) { // fail if the data doesn't match at any point
                 fail();
             }
         }

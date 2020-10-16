@@ -39,11 +39,14 @@ public class DeflateLite {
     
     public byte[] encode(byte[] input) {
         ByteWriter writer = new ByteWriter();
-        byte[] lzssEncoded = lzss.encodeUsingQueues(input).getBytes();        
+        byte[] lzssEncoded = lzss.encodeUsingQueues(input);        
         int[] codeLengths = huf.getDeflateCodeLengths(lzssEncoded);
         int[] codes = huf.createCodeArray(codeLengths);
+        writer.writeBit((byte) 0);
+        writer.writeBit((byte) 1);
         huf.createFileHeader(codeLengths, writer);
         BitReader reader = new BitReader(lzssEncoded);
+        reader.readInt(2);
         while (true) {
             int nextBit = reader.readBit();
             if (nextBit == -1) {
@@ -78,12 +81,13 @@ public class DeflateLite {
         }
         writeCode(writer, codes[256], codeLengths[256]);
         writer.close();
-        return writer.getBytes().getBytes();
+        return writer.getBytes();
     }
     
     public byte[] decode(byte[] input) {
         IntegerQueue output = new IntegerQueue(3 * input.length);
         BitReader reader = new BitReader(input);
+        reader.readInt(2);
         int[] codeLengths = new int[270];
         for (int i = 0; i < 270; i++) {
             codeLengths[i] = reader.readInt(5); // read code lengths from file header
@@ -106,11 +110,10 @@ public class DeflateLite {
             if (huffmanTree[treeIndex] > 0) {
                 int nextByte = huffmanTree[treeIndex] - 1;
                 if (nextByte == 256) {
-                    break;
-                    
+                    break;      
                 }
                 if (offsetCode) {
-                    int offset = (deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]));
+                    int offset = deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]);
                     for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
                         output.add(output.get(output.size() - offset));
                     }

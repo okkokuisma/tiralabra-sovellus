@@ -41,17 +41,17 @@ public class HuffmanTest {
     
     @Test
     public void encodedOutputIsSmallerInSize() {
-        IntegerQueue encoded = encoder.encode(input);
-        assertTrue(encoded.size() < input.length);
+        byte[] encoded = encoder.encode(input);
+        assertTrue(encoded.length < input.length);
     }
     
     @Test
     public void decodedOutputMatchesOriginalInput() {
-        IntegerQueue decoded = encoder.decode(encoder.encode(input).getBytes());
-        assertEquals(input.length, decoded.size()); // same size
+        byte[] decoded = encoder.decode(encoder.encode(input));
+        assertEquals(input.length, decoded.length); // same size
         
-        for (int i = 0; i < decoded.size(); i++) {
-            if (input[i] != decoded.get(i)) { // fail if the data doesn't match at any point
+        for (int i = 0; i < decoded.length; i++) {
+            if (input[i] != decoded[i]) { // fail if the data doesn't match at any point
                 fail();
             }
         }

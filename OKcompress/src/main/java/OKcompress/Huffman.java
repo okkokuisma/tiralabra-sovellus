@@ -20,10 +20,12 @@ public class Huffman {
         257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097
     };
     
-    public IntegerQueue encode(byte[] input) {
+    public byte[] encode(byte[] input) {
         ByteWriter writer = new ByteWriter();
         int[] codeLengths = getCodeLengthsUsingHeap(input);
         int[] codes = createCodeArray(codeLengths);
+        writer.writeBit((byte) 1);
+        writer.writeBit((byte) 0);
         createFileHeader(codeLengths, writer);
         for (int i = 0; i < input.length; i++) {
             int code = codes[0xFF & input[i]];
@@ -55,9 +57,10 @@ public class Huffman {
         return writer.getBytes();
     }
     
-    public IntegerQueue decode(byte[] input) {
+    public byte[] decode(byte[] input) {
         IntegerQueue output = new IntegerQueue(2 * input.length);
         BitReader reader = new BitReader(input);
+        reader.readInt(2);
         int[] codeLengths = new int[256];
         for (int i = 0; i < 256; i++) {
             codeLengths[i] = reader.readInt(5); // read code lengths from file header
@@ -84,7 +87,7 @@ public class Huffman {
                 treeIndex = 1;
             }
         }
-        return output;
+        return output.getBytes();
     }
     
     /**
@@ -256,6 +259,7 @@ public class Huffman {
     private int[] createDeflateCompatibleOccurrenceArray(byte[] input) {
         int[] occurrences = new int[270];
         BitReader reader = new BitReader(input);
+        reader.readInt(2);
         while (true) {
             int nextBit = reader.readBit();
             if (nextBit == -1) {
