@@ -7,8 +7,8 @@ First set of test were run with the number of length bits set as 4, the default 
 
 ### Results
 
-Offset bits | Compressed file size | compression rate (compressed / original)
------------ | -------------------- | ----------------------------------------
+Offset bits<br />(dictionary size) |Compressed file<br />size (bytes) |Compression rate<br />(compressed / original)
+:-- | :-- | :--
 8 | 113635 | 74.7
 9 | 101441 | 66.7
 10 | 93129 | 61.2
