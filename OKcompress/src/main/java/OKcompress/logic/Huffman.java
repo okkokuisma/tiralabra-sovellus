@@ -4,6 +4,7 @@ package OKcompress.logic;
 import OKcompress.domain.IntegerQueue;
 import OKcompress.domain.HuffmanHeap;
 import OKcompress.domain.HuffmanNode;
+import OKcompress.domain.IntegerHashMap;
 import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
 
@@ -66,25 +67,36 @@ public class Huffman {
             codeLengths[i] = reader.readInt(5); // read code lengths from file header
         }
         int[] codes = createCodeArray(codeLengths);
-        int[] huffmanTree = recreateHuffmanTree(codes, codeLengths);
-        int treeIndex = 1;
+        IntegerHashMap codeh = new IntegerHashMap();
+        IntegerHashMap codel = new IntegerHashMap();
+        for (int i = 0; i < codes.length; i++) {
+            if (codeLengths[i] != 0) {
+                codeh.put(codes[i], i);
+                codel.put(codes[i], codeLengths[i]);               
+            }
+        }
+        int codeLength = 0;
+        int code = 0;
         while (true) {
+            code = code << 1;
+            codeLength++;
             int nextBit = reader.readBit();
             if (nextBit == -1) {
                 break;
             }
-            if (nextBit == 1) { // right child
-                treeIndex = 2 * treeIndex + 1;
-            } else { // left child
-                treeIndex = 2 * treeIndex;
+            if (nextBit == 1) {
+                code++;
             }
-            if (huffmanTree[treeIndex] > 0) {
-                int nextByte = huffmanTree[treeIndex] - 1;
-                if (nextByte == 256) {
-                    break;
+            if (codeh.containsKey(code)) {
+                if (codel.get(code) == codeLength) {
+                    int nextByte = codeh.get(code);
+                    if (nextByte == 256) {
+                        break;
+                    }
+                    output.add(nextByte);
+                    code = 0;
+                    codeLength = 0;
                 }
-                output.add((huffmanTree[treeIndex] - 1));
-                treeIndex = 1;
             }
         }
         return output.getBytes();

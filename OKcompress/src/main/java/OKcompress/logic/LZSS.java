@@ -91,8 +91,7 @@ public class LZSS {
                     i += length - 1;
                     break;
                 }            
-            }
-            
+            }        
             if (!coded) { // didn't find a match at least 3 bytes long
                 writer.writeLZSSUncoded(input[i]);
             } else {
@@ -137,7 +136,7 @@ public class LZSS {
     private int checkMatchLength(byte[] input, int inputIndex, int dictionaryIndex) {
         int length = 1;
         int maxLength = (int) Math.pow(2, lengthBits) - 1;
-        while (true) { // check how long the match is
+        while (true) {
             if (length > (maxLength - 1)) {
                 break;
             }

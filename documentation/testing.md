@@ -54,3 +54,7 @@ Offset bits | Queues<br />(seconds) | Brute force<br />(seconds)
 14 | 0.168 | 0.421
 15 | 0.205 | 0.524
 16 | 0.251 | 0.629
+
+lzss: 87623
+huf: 87851
+def: 79124

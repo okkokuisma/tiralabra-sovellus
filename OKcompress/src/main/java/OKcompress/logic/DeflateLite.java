@@ -1,6 +1,7 @@
 
 package OKcompress.logic;
 
+import OKcompress.domain.IntegerHashMap;
 import OKcompress.domain.IntegerQueue;
 import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
@@ -93,40 +94,52 @@ public class DeflateLite {
             codeLengths[i] = reader.readInt(5); // read code lengths from file header
         }
         int[] codes = huf.createCodeArray(codeLengths);
-        int[] huffmanTree = huf.recreateHuffmanTree(codes, codeLengths);
-        int treeIndex = 1;
+        IntegerHashMap codeh = new IntegerHashMap();
+        IntegerHashMap codel = new IntegerHashMap();
+        for (int i = 0; i < codes.length; i++) {
+            if (codeLengths[i] != 0) {
+                codeh.put(codes[i], i);
+                codel.put(codes[i], codeLengths[i]);               
+            }
+        }
+
+        int code = 0;
+        int codeLength = 0;
         boolean offsetCode = false;
         int length = 0;
         while (true) {
+            code = code << 1;
+            codeLength++;
             int nextBit = reader.readBit();
             if (nextBit == -1) {
                 break;
             }
             if (nextBit == 1) {
-                treeIndex = 2 * treeIndex + 1;
-            } else {
-                treeIndex = 2 * treeIndex;
+                code++;
             }
-            if (huffmanTree[treeIndex] > 0) {
-                int nextByte = huffmanTree[treeIndex] - 1;
-                if (nextByte == 256) {
-                    break;      
-                }
-                if (offsetCode) {
-                    int offset = deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]);
-                    for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
-                        output.add(output.get(output.size() - offset));
+            if (codeh.containsKey(code)) {
+                if (codel.get(code) == codeLength) {
+                    int nextByte = codeh.get(code);
+                    if (nextByte == 256) {
+                        break;
                     }
-                    offsetCode = false;
-                } else {
-                    if (nextByte > 256) {
-                        length = deflateLengthCodes[nextByte - 257] - 1;
-                        offsetCode = true;
+                    if (offsetCode) {
+                        int offset = deflateOffsetMins[nextByte] + reader.readInt(deflateOffsetExtraBits[nextByte]);
+                        for (int j = 0; j < length; j++) { // add {length} bytes starting from index {size - offset} 
+                            output.add(output.get(output.size() - offset));
+                        }
+                        offsetCode = false;
                     } else {
-                        output.add(nextByte);
-                    }     
+                        if (nextByte > 256) {
+                            length = deflateLengthCodes[nextByte - 257] - 1;
+                            offsetCode = true;
+                        } else {
+                            output.add(nextByte);
+                        }     
+                    }
+                    code = 0;
+                    codeLength = 0;
                 }
-                treeIndex = 1;
             }
         }
         return output.getBytes();
