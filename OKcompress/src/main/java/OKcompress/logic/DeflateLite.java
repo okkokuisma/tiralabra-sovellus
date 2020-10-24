@@ -7,8 +7,7 @@ import OKcompress.utils.BitReader;
 import OKcompress.utils.ByteWriter;
 
 /**
- *
- * @author ogkuisma
+ * Data compression and decompression using a mixture of LZSS and Huffman coding.
  */
 public class DeflateLite {
     

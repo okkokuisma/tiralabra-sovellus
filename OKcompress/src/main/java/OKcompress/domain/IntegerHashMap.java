@@ -6,8 +6,7 @@
 package OKcompress.domain;
 
 /**
- *
- * @author ogkuisma
+ * A dynamic hash map structure for storing integers.
  */
 public class IntegerHashMap {
     private IntegerHashMapNode[] table;
@@ -17,6 +16,13 @@ public class IntegerHashMap {
         table = new IntegerHashMapNode[883];
     }
     
+    /**
+    * Adds a new (key, value) pair to this IntegerHashMap.
+    *
+    * @param   key    The key which is used to find the value
+    * @param   value    The value to be stored
+    * 
+    */
     public void put(int key, int value) {
         int hash = key % 883;
         for (IntegerHashMapNode node = table[hash]; node != null; node = node.nextNode) {
@@ -33,6 +39,13 @@ public class IntegerHashMap {
         }
     }
     
+    /**
+    * Returns the value stored with the given key.
+    *
+    * @param   key    The key of the value to be searched for
+    * 
+    * @return The respective value.
+    */
     public int get(int key) {
         int hash = key % 883;
         for (IntegerHashMapNode node = table[hash]; node != null; node = node.nextNode) {
@@ -43,6 +56,11 @@ public class IntegerHashMap {
         return -1;
     }
     
+    /**
+    * @param   key    The key to be searched for
+    * 
+    * @return True if this IntegerHashMap contains the given key, false if not.
+    */
     public boolean containsKey(int key) {
         int hash = key % 883;
         for (IntegerHashMapNode node = table[hash]; node != null; node = node.nextNode) {
