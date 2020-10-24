@@ -5,7 +5,6 @@
  */
 package OKcompress.utils;
 
-import OKcompress.domain.IntegerQueue;
 import OKcompress.io.FileManager;
 import OKcompress.logic.DeflateLite;
 import OKcompress.logic.Huffman;
@@ -202,4 +201,8 @@ public class Tester {
         }       
     }
     
+    public static void main(String[] args) throws IOException { 
+        Tester test = new Tester();
+        test.run();
+    }
 }

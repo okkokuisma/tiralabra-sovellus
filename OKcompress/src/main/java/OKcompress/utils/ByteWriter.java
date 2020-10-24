@@ -17,9 +17,6 @@ public class ByteWriter {
     }
     
     public void writeBit(byte bit) {
-        if (!(bit == 0 || bit == 1)) {
-            throw new RuntimeException("A bit can only be a 1 or 0");
-        }
         buffer = (byte) (buffer << 1);
         buffer |= bit;
         position++;
@@ -77,28 +74,6 @@ public class ByteWriter {
                 writeBit((byte) 0);
             }
             length = length << 1;
-        }
-    }
-    
-    /**
-    * Writes a byte without any sign bit preceding it.
-    *
-    * @param   input    Byte to be written
-    */
-    public void addByte(byte input) {
-        if (input == 0) {
-            flushByte();
-        } else {
-            int bits = 0x000000FF & input;
-            for (int i = 0; i < 8; i++) {
-                int a = bits & 128;
-                if (a == 128) { // check whether the first bit is 1 or 0
-                    writeBit((byte) 1);
-                } else {
-                    writeBit((byte) 0);
-                }
-                bits = bits << 1;
-            }
         }
     }
     

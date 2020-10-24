@@ -221,37 +221,6 @@ public class Huffman {
         return numericalValues;
     }
     
-    /**
-    * Recreates a Huffman tree as an array using codes and code lengths of each byte value [0-255].
-    *
-    * @param   codes     Huffman code for each byte value [0-255]
-    * @param   codeLengths     Code length for each byte value [0-255]
-    *
-    * @return Huffman tree as an array with byte values as nodes
-    */
-    public int[] recreateHuffmanTree(int[] codes, int[] codeLengths) {
-        int[] huffmanTree = new int[1000000];
-        for (int i = 0; i < codes.length; i++) {
-            if (codes[i] >= 0) {
-                int code = codes[i];
-                int treeIndex = 1;
-                int codeLength = codeLengths[i];
-                int highestBit = (int) Math.pow(2, (codeLength-1));
-                for (int j = 0; j < codeLength; j++) { 
-                    int a = code & highestBit;
-                    if (a == highestBit) {
-                        treeIndex = 2 * treeIndex + 1; // right child
-                    } else {
-                        treeIndex = 2 * treeIndex; // left child
-                    }
-                    code = code << 1;
-                }
-                huffmanTree[treeIndex] = i + 1;
-            }
-        }
-        return huffmanTree;
-    }
-    
     public void createFileHeader(int[] codeLengths, ByteWriter writer) {
         for (int i = 0; i < codeLengths.length; i++) { // store the code length of each symbol for decoding
             int codeLength = codeLengths[i];

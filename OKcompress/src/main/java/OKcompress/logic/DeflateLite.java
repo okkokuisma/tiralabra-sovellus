@@ -102,7 +102,6 @@ public class DeflateLite {
                 codel.put(codes[i], codeLengths[i]);               
             }
         }
-
         int code = 0;
         int codeLength = 0;
         boolean offsetCode = false;

@@ -88,11 +88,7 @@ public class IntegerQueue {
     * 
     * @return The byte in the given index
     */
-    public int get(int k) {
-        if (k > array.length - 1) {
-            return 0;
-        }
-        
+    public int get(int k) {      
         if (startIndex == 0) {
             return array[k];
         }

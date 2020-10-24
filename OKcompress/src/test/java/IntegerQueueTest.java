@@ -80,4 +80,32 @@ public class IntegerQueueTest {
             }
         }
     }
+    
+    @Test
+    public void getBytes() {
+        for (int i = 0; i < 1000; i++) {
+            if (i%2 == 0) queue.addFirst(i);
+            else queue.add(i);
+        }
+        
+        byte[] a = queue.getBytes();
+        
+        assertEquals(1000, a.length);
+        
+        for (int i = 0; i < 1000; i++) {
+            if (i < 500) {
+                assertTrue(a[i] % 2 == 0);              
+            } else {
+                assertTrue(a[i] % 2 != 0);
+            }
+        }
+    }
+    
+    @Test
+    public void removingFromEmptyQueue() {
+        assertTrue(queue.isEmpty());
+        queue.removeLast();
+        assertTrue(queue.size() == 0);
+    }
+    
 }
