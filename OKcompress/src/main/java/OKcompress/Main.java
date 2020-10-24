@@ -13,9 +13,7 @@ import javafx.application.Application;
 
 
 public class Main {  
-    public static void main(String[] args) throws IOException { 
-//        Application.launch(OKcompressUI.class);
-        Tester test = new Tester();
-        test.run();
+    public static void main(String[] args) { 
+        Application.launch(OKcompressUI.class);
     }
 }
