@@ -3,6 +3,7 @@ Simple unit tests were performed with JUnit. Class coverage as follows:
 ![Class coverage](https://github.com/okkokuisma/tiralabra-sovellus/blob/master/documentation/test_coverage.png)
 
 Tests can be run from terminal with a more detailed report command:
+
 `mvn test jacoco:report`
 
 # Performance testing
