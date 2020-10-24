@@ -1,4 +1,11 @@
-# Testing
+# Unit testing
+Simple unit tests were performed with JUnit. Class coverage as follows:
+![Class coverage](https://github.com/okkokuisma/tiralabra-sovellus/blob/master/documentation/test_coverage.png)
+
+Tests can be run from terminal with a more detailed report command:
+`mvn test jacoco:report`
+
+# Performance testing
 
 ## Comparisons between the algorithms
 There were four different text files used for testing the computing and compression performance of the three algorithms, LZSS, Huffman and DeflateLite. The smallest file was also the simplest in terms of content. The other three were taken from the Canterbury Corpus, a set of files specifically chosen for testing compression algorithms (more info here https://corpus.canterbury.ac.nz/purpose.html).
