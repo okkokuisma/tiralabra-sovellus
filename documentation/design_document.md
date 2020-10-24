@@ -11,3 +11,5 @@ Huffman coding is usually based on a minimum heap structure to determine differe
 * https://michaeldipperstein.github.io/lzss.html
 * https://sites.google.com/site/datacompressionguide/lz77
 * http://web.stanford.edu/class/archive/cs/cs106x/cs106x.1192/resources/minibrowser2/huffman-encoding-supplement.pdf
+
+(Koulutusohjelma on tietojenkäsittelytieteen kandidaatti)
